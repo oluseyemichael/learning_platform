@@ -1,0 +1,361 @@
+[
+    {
+        "model": "core.course",
+        "pk": 1,
+        "fields": {
+            "course_name": "Web Development",
+            "description": "Learn the fundamentals of web development and how to build websites."
+        }
+    },
+    {
+        "model": "core.course",
+        "pk": 2,
+        "fields": {
+            "course_name": "Machine Learning",
+            "description": "Learn machine learning algorithms and tools"
+        }
+    },
+    {
+        "model": "core.course",
+        "pk": 3,
+        "fields": {
+            "course_name": "Web Design",
+            "description": "Learn how to design user-friendly and aesthetic websites"
+        }
+    },
+    {
+        "model": "core.learningpath",
+        "pk": 1,
+        "fields": {
+            "path_name": "Frontend Development",
+            "course": 1
+        }
+    },
+    {
+        "model": "core.learningpath",
+        "pk": 2,
+        "fields": {
+            "path_name": "Backend Development",
+            "course": 1
+        }
+    },
+    {
+        "model": "core.learningpath",
+        "pk": 3,
+        "fields": {
+            "path_name": "Supervised Learning",
+            "course": 2
+        }
+    },
+    {
+        "model": "core.learningpath",
+        "pk": 4,
+        "fields": {
+            "path_name": "Unsupervised Learning",
+            "course": 2
+        }
+    },
+    {
+        "model": "core.learningpath",
+        "pk": 5,
+        "fields": {
+            "path_name": "UI/UX Principles",
+            "course": 3
+        }
+    },
+    {
+        "model": "core.learningpath",
+        "pk": 6,
+        "fields": {
+            "path_name": "Design Systems",
+            "course": 3
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 1,
+        "fields": {
+            "module_name": "HTML Basics",
+            "learning_path": 1,
+            "topic": "Introduction to HTML"
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 2,
+        "fields": {
+            "module_name": "CSS Fundamentals",
+            "learning_path": 1,
+            "topic": "CSS"
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 3,
+        "fields": {
+            "module_name": "JavaScript Essentials",
+            "learning_path": 1,
+            "topic": "JavaScript",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 4,
+        "fields": {
+            "module_name": "Node.js Basics",
+            "learning_path": 2,
+            "topic": "Introduction to Node.js"
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 5,
+        "fields": {
+            "module_name": "Express.js Fundamentals",
+            "learning_path": 2,
+            "topic": "Introduction to Express.js"
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 6,
+        "fields": {
+            "module_name": "Supervised Learning Algorithms",
+            "learning_path": 3,
+            "topic": "Linear Regression and Decision Trees"
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 7,
+        "fields": {
+            "module_name": "Unsupervised Learning Algorithms",
+            "learning_path": 4,
+            "topic": "Clustering and Dimensionality Reduction"
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 8,
+        "fields": {
+            "module_name": "UI Design Principles",
+            "learning_path": 5,
+            "topic": "Basics of UI Design"
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 9,
+        "fields": {
+            "module_name": "Design Systems Overview",
+            "learning_path": 6,
+            "topic": "Design Systems for Scalable Projects"
+        }
+    },
+    {
+        "model": "core.quiz",
+        "pk": 1,
+        "fields": {
+            "quiz_name": "HTML Basics Quiz",
+            "module": 1
+        }
+    },
+    {
+        "model": "core.quiz",
+        "pk": 2,
+        "fields": {
+            "quiz_name": "CSS Fundamentals Quiz",
+            "module": 2
+        }
+    },
+    {
+        "model": "core.quiz",
+        "pk": 3,
+        "fields": {
+            "quiz_name": "JavaScript Essentials Quiz",
+            "module": 3
+        }
+    },
+    {
+        "model": "core.quiz",
+        "pk": 4,
+        "fields": {
+            "quiz_name": "Supervised Learning Quiz",
+            "module": 6
+        }
+    },
+    {
+        "model": "core.quiz",
+        "pk": 5,
+        "fields": {
+            "quiz_name": "Unsupervised Learning Quiz",
+            "module": 7
+        }
+    },
+    {
+        "model": "core.quiz",
+        "pk": 6,
+        "fields": {
+            "quiz_name": "UI Design Principles Quiz",
+            "module": 8
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 1,
+        "fields": {
+            "question_text": "What does HTML stand for?",
+            "quiz": 1
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 1,
+        "fields": {
+            "question": 1,
+            "answer_text": "HyperText Markup Language",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 2,
+        "fields": {
+            "question": 1,
+            "answer_text": "Hyperlinks and Text Markup Language",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 2,
+        "fields": {
+            "question_text": "Which CSS property is used to change text color?",
+            "quiz": 2
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 3,
+        "fields": {
+            "question": 2,
+            "answer_text": "color",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 4,
+        "fields": {
+            "question": 2,
+            "answer_text": "text-color",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 3,
+        "fields": {
+            "question_text": "What is the purpose of the 'let' keyword in JavaScript?",
+            "quiz": 3
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 5,
+        "fields": {
+            "question": 3,
+            "answer_text": "To declare a block-scoped variable",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 6,
+        "fields": {
+            "question": 3,
+            "answer_text": "To create a global variable",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 4,
+        "fields": {
+            "question_text": "Which algorithm is commonly used for supervised learning?",
+            "quiz": 4
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 7,
+        "fields": {
+            "question": 4,
+            "answer_text": "Linear Regression",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 8,
+        "fields": {
+            "question": 4,
+            "answer_text": "K-Means Clustering",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 5,
+        "fields": {
+            "question_text": "Which method is used in unsupervised learning?",
+            "quiz": 5
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 9,
+        "fields": {
+            "question": 5,
+            "answer_text": "Clustering",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 10,
+        "fields": {
+            "question": 5,
+            "answer_text": "Linear Regression",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 6,
+        "fields": {
+            "question_text": "Which of the following is a key principle of UI design?",
+            "quiz": 6
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 11,
+        "fields": {
+            "question": 6,
+            "answer_text": "Consistency in design elements",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 12,
+        "fields": {
+            "question": 6,
+            "answer_text": "Randomized user flow",
+            "is_correct": false
+        }
+    }
+]
