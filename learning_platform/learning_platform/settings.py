@@ -146,7 +146,6 @@ DATABASES = {
     'default': dj_database_url.config(default=os.getenv("DATABASE_URL"))
 }
 
-django_heroku.settings(locals())
 
 # JWT settings
 REST_FRAMEWORK = {
@@ -217,3 +216,5 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
 
 FRONTEND_URL = "http://localhost:5173"  # Adjust based on where frontend is running
+
+django_heroku.settings(locals())
