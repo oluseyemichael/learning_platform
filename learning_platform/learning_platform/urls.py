@@ -33,6 +33,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls), 
+    path('', lambda request: HttpResponseRedirect('/api/v1/')),  # Redirect to API base URL
     # Versioning the API under 'v1'
      # Register and Login endpoints
     path('api/v1/register/', RegisterView.as_view(), name='register_v1'),
