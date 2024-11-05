@@ -60,11 +60,11 @@ class Module(models.Model):
             print(f"Video fetched: {youtube_videos[0]['url']}")
             self.video_link = youtube_videos[0]['url']  # Use the best match
 
-        # Fetch blog content, prioritize Geeks for Geeks
-        blog_posts = get_blog_posts(self.topic)
-        if blog_posts:
-            print(f"Blog fetched: {blog_posts[0]['url']}")
-            self.blog_link = blog_posts[0]['url']  # Use the most relevant blog
+        # Fetch blog content
+        blog_post = get_blog_posts(self.topic)
+        if blog_post:
+            print(f"Blog fetched: {blog_post['url']}")
+            self.blog_link = blog_post['url']
 
         super(Module, self).save(*args, **kwargs)
 

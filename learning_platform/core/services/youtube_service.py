@@ -22,7 +22,8 @@ def get_youtube_videos(topic):
             order='relevance',  # Prioritize relevance
             videoDuration='long',  # Use 'long' for videos longer than 20 minutes
             type='video',
-            publishedAfter=published_after
+            publishedAfter=published_after,
+            relevanceLanguage="en"  # Enforce English-language videos
         )
         response = request.execute(num_retries=3)
         print(f"Initial search response items: {len(response['items'])}")

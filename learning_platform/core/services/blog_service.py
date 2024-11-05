@@ -43,11 +43,11 @@ def get_blog_posts(topic):
         print(f"An error occurred: {e}")
     return None
 
-# Test the function with a sample topic
-if __name__ == "__main__":
-    topic = "learn javascript"
-    result = get_blog_posts(topic)
-    if result:
-        print(f"Top learning resource for '{topic}': {result['title']} - {result['url']}")
-    else:
-        print(f"No suitable learning resource found for topic '{topic}'.")
+# # Test the function with a sample topic
+# if __name__ == "__main__":
+#     topic = "learn javascript"
+#     result = get_blog_posts(topic)
+#     if result:
+#         print(f"Top learning resource for '{topic}': {result['title']} - {result['url']}")
+#     else:
+#         print(f"No suitable learning resource found for topic '{topic}'.")
