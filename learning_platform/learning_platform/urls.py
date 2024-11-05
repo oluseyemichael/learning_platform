@@ -7,6 +7,7 @@ from rest_framework_simplejwt.views import (
 )
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from django.http import HttpResponseRedirect
 from rest_framework import permissions
 from core.views import CourseViewSet, ModuleViewSet, QuizViewSet, LearningPathViewSet, RegisterView, LoginView, VerifyEmailView, PasswordResetRequestView, PasswordResetConfirmView, ModuleProgressViewSet, QuizProgressViewSet, CourseProgressViewSet
 
