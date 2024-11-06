@@ -96,6 +96,11 @@ class LoginView(APIView):
         user = authenticate(username=username, password=password)
         
         if user:
+            if not user.is_active:
+                return Response({
+                    'error': 'Please verify your email to activate your account.'
+                }, status=status.HTTP_403_FORBIDDEN)
+                
             refresh = RefreshToken.for_user(user)
             return Response({
                 'tokens': {
