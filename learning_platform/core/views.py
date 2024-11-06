@@ -13,6 +13,9 @@ from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator as token_generator
 from django.contrib.auth.tokens import default_token_generator
 from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
 from django.conf import settings
 from django.core.mail import send_mail
 from django.conf import settings
@@ -28,25 +31,24 @@ class RegisterView(APIView):
         if serializer.is_valid():
             try:
                 user = serializer.save()
-                
-                # Generate JWT tokens
-                refresh = RefreshToken.for_user(user)
-                
-                # Send verification email
-                verification_link = f"{settings.FRONTEND_URL}/verify-email?token={str(refresh.access_token)}"
+                user.is_active = False  # Mark user as inactive until they verify their email
+                user.save()
+
+                # Generate email verification token
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                token = default_token_generator.make_token(user)
+
+                # Construct the verification link
+                verification_link = f"{settings.FRONTEND_URL}/verify-email?uid={uid}&token={token}"
                 send_mail(
                     'Verify Your Account',
                     f'Hi, Welcome to pathED. Please click the following link to verify your account: {verification_link}',
                     settings.DEFAULT_FROM_EMAIL,
                     [user.email]
                 )
-                
+
                 return Response({
                     'message': 'Registration successful. Check your email to verify your account.',
-                    'tokens': {
-                        'access': str(refresh.access_token),
-                        'refresh': str(refresh)
-                    },
                     'user': {
                         'username': user.username,
                         'email': user.email,
