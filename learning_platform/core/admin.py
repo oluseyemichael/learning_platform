@@ -46,11 +46,19 @@ class AnswerAdmin(admin.ModelAdmin):
 @admin.register(ModuleProgress)
 class ModuleProgressAdmin(admin.ModelAdmin):
     list_display = ('user', 'module', 'completed', 'completion_date', 'video_watched', 'quiz_completed')
+    search_fields = ('user__username', 'module__module_name')
+    list_filter = ('completed', 'video_watched', 'quiz_completed')
+
 
 @admin.register(QuizProgress)
 class QuizProgressAdmin(admin.ModelAdmin):
     list_display = ('user', 'quiz', 'score', 'completed', 'completion_date')
+    search_fields = ('user__username', 'quiz__quiz_name')
+    list_filter = ('completed',)
+
 
 @admin.register(CourseProgress)
 class CourseProgressAdmin(admin.ModelAdmin):
     list_display = ('user', 'course', 'completed', 'completion_date', 'progress_percentage')
+    search_fields = ('user__username', 'course__course_name')
+    list_filter = ('completed',)

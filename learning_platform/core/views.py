@@ -19,6 +19,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.conf import settings
 from django.core.mail import send_mail
 from django.conf import settings
+from rest_framework.decorators import action,  api_view, permission_classes
+from rest_framework import status
 import logging
 logger = logging.getLogger(__name__)
 
@@ -214,3 +216,38 @@ class CourseProgressViewSet(viewsets.ModelViewSet):
         if user_id:
             return self.queryset.filter(user_id=user_id)
         return self.queryset
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_profile(request):
+    user = request.user
+    user_data = {
+        "username": user.username,
+        "email": user.email,
+    }
+
+    # Fetch course progress data for the user
+    progress_data = CourseProgress.objects.filter(user=user)
+    progress_serialized = CourseProgressSerializer(progress_data, many=True).data
+
+    user_data["progress_data"] = progress_serialized
+    return Response(user_data)
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def update_course_progress(request, course_id):
+    user = request.user
+    progress_percentage = request.data.get("progress_percentage", 0)
+
+    # Update or create course progress for this user and course
+    progress, created = CourseProgress.objects.update_or_create(
+        user=user,
+        course_id=course_id,
+        defaults={"progress_percentage": progress_percentage}
+    )
+
+    # Recalculate and update progress status
+    progress.calculate_progress()
+
+    return Response({"message": "Progress updated successfully", "progress": CourseProgressSerializer(progress).data})

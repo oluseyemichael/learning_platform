@@ -65,6 +65,8 @@ class QuizProgressSerializer(serializers.ModelSerializer):
         fields = ['user', 'quiz', 'score', 'completed', 'completion_date']
 
 class CourseProgressSerializer(serializers.ModelSerializer):
+    course = CourseSerializer()  # Embed course details
+    
     class Meta:
         model = CourseProgress
         fields = ['user', 'course', 'completed', 'completion_date', 'progress_percentage']

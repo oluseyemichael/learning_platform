@@ -105,10 +105,24 @@ class ModuleProgress(models.Model):
     completion_date = models.DateTimeField(null=True, blank=True)
     video_watched = models.BooleanField(default=False)  # Track if video content is completed
     quiz_completed = models.BooleanField(default=False)  # Track if module quiz is completed
-    
+
     def calculate_progress(self):
+        # Calculate if module progress is complete
         self.completed = self.video_watched and self.quiz_completed
+        if self.completed:
+            self.completion_date = timezone.now()
+        else:
+            self.completion_date = None
         self.save()
+
+        # Update CourseProgress whenever a module's progress changes
+        course_progress = CourseProgress.objects.filter(user=self.user, course=self.module.learning_path.course).first()
+        if course_progress:
+            course_progress.calculate_progress()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.calculate_progress()
 
     def __str__(self):
         return f"{self.user.username} - {self.module.module_name} - {'Completed' if self.completed else 'In Progress'}"
@@ -119,10 +133,23 @@ class QuizProgress(models.Model):
     score = models.FloatField(null=True, blank=True)
     completed = models.BooleanField(default=False)
     completion_date = models.DateTimeField(null=True, blank=True)
-    
+
     def calculate_progress(self):
         self.completed = self.score >= 70.0  # passing score of 70%
+        if self.completed:
+            self.completion_date = timezone.now()
+        else:
+            self.completion_date = None
         self.save()
+
+        # Trigger course progress update
+        course_progress = CourseProgress.objects.filter(user=self.user, course=self.quiz.module.learning_path.course).first()
+        if course_progress:
+            course_progress.calculate_progress()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.calculate_progress()
 
     def __str__(self):
         return f"{self.user.username} - {self.quiz.quiz_name} - {'Completed' if self.completed else 'In Progress'}"
@@ -133,7 +160,7 @@ class CourseProgress(models.Model):
     completed = models.BooleanField(default=False)
     completion_date = models.DateTimeField(null=True, blank=True)
     progress_percentage = models.FloatField(default=0.0)  # Track overall progress as a percentage
-    
+
     def calculate_progress(self):
         total_modules = self.course.learning_paths.aggregate(
             total_modules=models.Count('modules')
@@ -145,7 +172,9 @@ class CourseProgress(models.Model):
         if total_modules > 0:
             self.progress_percentage = (completed_modules / total_modules) * 100
             self.completed = self.progress_percentage == 100
+            if self.completed:
+                self.completion_date = timezone.now()
             self.save()
-            
+
     def __str__(self):
         return f"{self.user.username} - {self.course.course_name} - {self.progress_percentage}% complete"

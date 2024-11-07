@@ -9,7 +9,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django.http import HttpResponseRedirect
 from rest_framework import permissions
-from core.views import CourseViewSet, ModuleViewSet, QuizViewSet, LearningPathViewSet, RegisterView, LoginView, VerifyEmailView, PasswordResetRequestView, PasswordResetConfirmView, ModuleProgressViewSet, QuizProgressViewSet, CourseProgressViewSet
+from core.views import CourseViewSet, ModuleViewSet, QuizViewSet, LearningPathViewSet, RegisterView, LoginView, VerifyEmailView, PasswordResetRequestView, PasswordResetConfirmView, ModuleProgressViewSet, QuizProgressViewSet, CourseProgressViewSet, get_user_profile, update_course_progress
 
 # Versioned Router Setup for API
 router = DefaultRouter()
@@ -45,6 +45,8 @@ urlpatterns = [
     path('api/v1/verify-email/', VerifyEmailView.as_view(), name='verify_email'),
     path('api/v1/password-reset-request/', PasswordResetRequestView.as_view(), name='password_reset_request'),
     path('api/v1/reset-password-confirm/', PasswordResetConfirmView.as_view(), name='reset_password_confirm'),
+    path('api/v1/user-profile/', get_user_profile, name='get_user_profile'),  # Fetch user profile
+    path('api/v1/course-progress/<int:course_id>/', update_course_progress, name='update_course_progress'),  # Update course progress
      # Versioned router endpoint
     path('api/v1/', include(router.urls)),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
