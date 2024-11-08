@@ -85,7 +85,10 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "https://your-frontend-deployment.com",  # deployed frontend URL
+]
 
 
 ROOT_URLCONF = 'learning_platform.urls'
