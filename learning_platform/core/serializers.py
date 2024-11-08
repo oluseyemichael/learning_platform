@@ -33,7 +33,7 @@ class LearningPathSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LearningPath
-        fields = ['path_name', 'modules']
+        fields = ['id','path_name', 'modules']
 
 class ModuleSerializer(serializers.ModelSerializer):
     class Meta:
