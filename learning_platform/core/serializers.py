@@ -26,7 +26,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ['course_name', 'description', 'learning_paths']
+        fields = ['id', 'course_name', 'description', 'learning_paths']
 
 class LearningPathSerializer(serializers.ModelSerializer):
     modules = serializers.StringRelatedField(many=True)
