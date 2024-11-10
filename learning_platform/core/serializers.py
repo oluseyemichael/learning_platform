@@ -27,6 +27,9 @@ class LearningPathSerializer(serializers.ModelSerializer):
     class Meta:
         model = LearningPath
         fields = ['id','path_name', 'modules']
+        
+    def get_modules(self, obj):
+        return [{'id': module.id, 'name': module.module_name} for module in obj.modules.all()]
 
 class CourseSerializer(serializers.ModelSerializer):
     learning_paths = LearningPathSerializer(many=True)  #nested serializer here
@@ -39,7 +42,7 @@ class CourseSerializer(serializers.ModelSerializer):
 class ModuleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Module
-        fields = ['module_name', 'topic', 'video_link', 'blog_link']
+        fields = ['id', 'module_name', 'topic', 'video_link', 'blog_link']
 
 class QuizSerializer(serializers.ModelSerializer):
     questions = serializers.StringRelatedField(many=True)
