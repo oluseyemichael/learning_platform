@@ -9,7 +9,12 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django.http import HttpResponseRedirect
 from rest_framework import permissions
-from core.views import CourseViewSet, ModuleViewSet, QuizViewSet, LearningPathViewSet, RegisterView, LoginView, VerifyEmailView, PasswordResetRequestView, PasswordResetConfirmView, ModuleProgressViewSet, QuizProgressViewSet, CourseProgressViewSet, get_user_profile, update_course_progress
+from core.views import (
+    CourseViewSet, ModuleViewSet, QuizViewSet, LearningPathViewSet,
+    RegisterView, LoginView, VerifyEmailView, PasswordResetRequestView,
+    PasswordResetConfirmView, ModuleProgressViewSet, QuizProgressViewSet,
+    CourseProgressViewSet, get_user_profile, update_course_progress
+)
 
 # Versioned Router Setup for API
 router = DefaultRouter()
@@ -35,8 +40,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls), 
     path('', lambda request: HttpResponseRedirect('/api/v1/')),  # Redirect to API base URL
-    # Versioning the API under 'v1'
-     # Register and Login endpoints
+    # Register and Login endpoints
     path('api/v1/register/', RegisterView.as_view(), name='register_v1'),
     path('api/v1/login/', LoginView.as_view(), name='login_v1'),
     # JWT Token endpoints
@@ -47,7 +51,9 @@ urlpatterns = [
     path('api/v1/reset-password-confirm/', PasswordResetConfirmView.as_view(), name='reset_password_confirm'),
     path('api/v1/user-profile/', get_user_profile, name='get_user_profile'),  # Fetch user profile
     path('api/v1/course-progress/<int:course_id>/', update_course_progress, name='update_course_progress'),  # Update course progress
-     # Versioned router endpoint
+    # Explicit path for retrieving module details
+    path('api/v1/modules/<int:pk>/', ModuleViewSet.as_view({'get': 'retrieve'}), name='module-detail'),  
+    # Versioned router endpoint
     path('api/v1/', include(router.urls)),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
