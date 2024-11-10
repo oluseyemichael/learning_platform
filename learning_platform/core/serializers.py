@@ -21,19 +21,20 @@ class UserSerializer(serializers.ModelSerializer):
         )
         return user
 
-class CourseSerializer(serializers.ModelSerializer):
-    learning_paths = serializers.StringRelatedField(many=True)
-
-    class Meta:
-        model = Course
-        fields = ['id', 'course_name', 'description', 'learning_paths']
-
 class LearningPathSerializer(serializers.ModelSerializer):
     modules = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = LearningPath
         fields = ['id','path_name', 'modules']
+
+class CourseSerializer(serializers.ModelSerializer):
+    learning_paths = LearningPathSerializer(many=True)  #nested serializer here
+
+    class Meta:
+        model = Course
+        fields = ['id', 'course_name', 'description', 'learning_paths']
+
 
 class ModuleSerializer(serializers.ModelSerializer):
     class Meta:
