@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import User, Course, LearningPath, Module, Quiz, Question, ModuleProgress, QuizProgress, CourseProgress
+from .models import User, Course, LearningPath, Module, Quiz, Question, ModuleProgress, QuizProgress, CourseProgress, LearningPathProgress
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -57,6 +57,9 @@ class QuestionSerializer(serializers.ModelSerializer):
         fields = ['question_text', 'answers']
 
 class ModuleProgressSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+    module = serializers.StringRelatedField()
+
     class Meta:
         model = ModuleProgress
         fields = ['user', 'module', 'completed', 'completion_date', 'video_watched', 'quiz_completed']
@@ -66,9 +69,20 @@ class QuizProgressSerializer(serializers.ModelSerializer):
         model = QuizProgress
         fields = ['user', 'quiz', 'score', 'completed', 'completion_date']
 
+class LearningPathProgressSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+    learning_path = serializers.StringRelatedField()
+    modules_progress = ModuleProgressSerializer(many=True, source='module_progress_set')
+
+    class Meta:
+        model = LearningPathProgress
+        fields = ['user', 'learning_path', 'completed', 'completion_date', 'progress_percentage', 'modules_progress']
+        
 class CourseProgressSerializer(serializers.ModelSerializer):
-    course = CourseSerializer()  # Embed course details
-    
+    user = serializers.StringRelatedField()
+    course = serializers.StringRelatedField()
+    learning_paths_progress = LearningPathProgressSerializer(many=True, source='learning_path_progress_set')
+
     class Meta:
         model = CourseProgress
-        fields = ['user', 'course', 'completed', 'completion_date', 'progress_percentage']
+        fields = ['user', 'course', 'completed', 'completion_date', 'progress_percentage', 'learning_paths_progress']

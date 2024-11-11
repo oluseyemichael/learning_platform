@@ -5,7 +5,7 @@ from rest_framework import status
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
-from .models import Course, LearningPath, Module, Quiz, Question, ModuleProgress, QuizProgress, CourseProgress
+from .models import Course, LearningPath, Module, Quiz, Question, ModuleProgress, QuizProgress, CourseProgress, LearningPathProgress
 from .serializers import CourseSerializer, LearningPathSerializer, ModuleSerializer, QuizSerializer, UserSerializer, ModuleProgressSerializer, QuizProgressSerializer, CourseProgressSerializer
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -260,3 +260,40 @@ def get_module_by_name(request, module_name):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Module.DoesNotExist:
         return Response({'error': 'Module not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_module_progress(request, module_id):
+    try:
+        module_progress, created = ModuleProgress.objects.update_or_create(
+            user=request.user, module_id=module_id,
+            defaults={'video_watched': True}
+        )
+        module_progress.calculate_progress()
+        return Response(ModuleProgressSerializer(module_progress).data)
+    except Module.DoesNotExist:
+        return Response({"error": "Module not found"}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_quiz_score(request, quiz_id):
+    score = request.data.get("score", 0)
+    try:
+        quiz_progress, created = QuizProgress.objects.update_or_create(
+            user=request.user, quiz_id=quiz_id,
+            defaults={'score': score}
+        )
+        quiz_progress.calculate_progress()
+        return Response(QuizProgressSerializer(quiz_progress).data)
+    except Quiz.DoesNotExist:
+        return Response({"error": "Quiz not found"}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_course_progress(request, course_id):
+    try:
+        course_progress = CourseProgress.objects.get(user=request.user, course_id=course_id)
+        course_progress.calculate_progress()
+        return Response(CourseProgressSerializer(course_progress).data)
+    except CourseProgress.DoesNotExist:
+        return Response({"error": "Course progress not found"}, status=status.HTTP_404_NOT_FOUND)
