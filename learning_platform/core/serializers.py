@@ -28,8 +28,6 @@ class LearningPathSerializer(serializers.ModelSerializer):
         model = LearningPath
         fields = ['id','path_name', 'modules']
         
-    def get_modules(self, obj):
-        return [{'id': module.id, 'name': module.module_name} for module in obj.modules.all()]
 
 class CourseSerializer(serializers.ModelSerializer):
     learning_paths = LearningPathSerializer(many=True)  #nested serializer here
