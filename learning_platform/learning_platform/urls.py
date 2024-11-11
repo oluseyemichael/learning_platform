@@ -13,7 +13,7 @@ from core.views import (
     CourseViewSet, ModuleViewSet, QuizViewSet, LearningPathViewSet,
     RegisterView, LoginView, VerifyEmailView, PasswordResetRequestView,
     PasswordResetConfirmView, ModuleProgressViewSet, QuizProgressViewSet,
-    CourseProgressViewSet, get_user_profile, update_course_progress
+    CourseProgressViewSet, get_user_profile, update_course_progress, get_module_by_name
 )
 
 # Versioned Router Setup for API
@@ -53,6 +53,7 @@ urlpatterns = [
     path('api/v1/course-progress/<int:course_id>/', update_course_progress, name='update_course_progress'),  # Update course progress
     # Explicit path for retrieving module details
     path('api/v1/modules/<int:pk>/', ModuleViewSet.as_view({'get': 'retrieve'}), name='module-detail'),  
+    path('module-by-name/<str:module_name>/', get_module_by_name, name='get_module_by_name'),
     # Versioned router endpoint
     path('api/v1/', include(router.urls)),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

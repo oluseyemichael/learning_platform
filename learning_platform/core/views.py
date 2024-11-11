@@ -251,3 +251,12 @@ def update_course_progress(request, course_id):
     progress.calculate_progress()
 
     return Response({"message": "Progress updated successfully", "progress": CourseProgressSerializer(progress).data})
+
+@api_view(['GET'])
+def get_module_by_name(request, module_name):
+    try:
+        module = Module.objects.get(module_name=module_name)
+        serializer = ModuleSerializer(module)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Module.DoesNotExist:
+        return Response({'error': 'Module not found'}, status=status.HTTP_404_NOT_FOUND)
