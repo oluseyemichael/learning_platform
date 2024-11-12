@@ -27,12 +27,14 @@ class ModuleAdmin(admin.ModelAdmin):
     save_on_top = True
     save_as = True
     
-    def get_form(self, request, obj=None, **kwargs):
-        form = super().get_form(request, obj, **kwargs)
-        form.base_fields['_save'].label = "Generate Module"  # Main save button
-        form.base_fields['_addanother'].label = "Generate & Add Another Module"  # Save and add another
-        form.base_fields['_continue'].label = "Generate & Continue Editing"  # Save and continue editing
-        return form
+    def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        extra_context.update({
+            'save_label': _('Save Module'),
+            'save_and_continue_label': _('Save & Continue Editing'),
+            'save_and_add_another_label': _('Save & Add Another Module')
+        })
+        return super().changeform_view(request, object_id, form_url, extra_context)
 
 # Quiz Admin
 @admin.register(Quiz)

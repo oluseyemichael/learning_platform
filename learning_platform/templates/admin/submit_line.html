@@ -1,0 +1,16 @@
+{% extends "admin/submit_line.html" %}
+{% load i18n admin_urls %}
+
+{% block submit-row %}
+<div class="submit-row">
+    {% if show_save %}<input type="submit" value="{% if save_label %}{{ save_label }}{% else %}{% translate 'Save' %}{% endif %}" class="default" name="_save">{% endif %}
+    
+    {% if show_save_and_continue %}
+        <input type="submit" value="{% if save_and_continue_label %}{{ save_and_continue_label }}{% else %}{% translate 'Save and continue editing' %}{% endif %}" name="_continue">
+    {% endif %}
+    
+    {% if show_save_and_add_another %}
+        <input type="submit" value="{% if save_and_add_another_label %}{{ save_and_add_another_label }}{% else %}{% translate 'Save and add another' %}{% endif %}" name="_addanother">
+    {% endif %}
+</div>
+{% endblock %}
