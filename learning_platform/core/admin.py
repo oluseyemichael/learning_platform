@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import User, Course, LearningPath, Module, Quiz, Question, Answer, ModuleProgress, QuizProgress, CourseProgress
+from django.utils.translation import gettext_lazy as _
 
 # User Admin
 @admin.register(User)
