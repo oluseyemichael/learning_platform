@@ -31,9 +31,9 @@ class ModuleAdmin(admin.ModelAdmin):
     def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
         extra_context = extra_context or {}
         extra_context.update({
-            'save_label': _('Save Module'),
-            'save_and_continue_label': _('Save & Continue Editing'),
-            'save_and_add_another_label': _('Save & Add Another Module')
+            'save_label': _('Generate Module'),
+            'save_and_continue_label': _('Generate & Continue Editing'),
+            'save_and_add_another_label': _('Generate & Add Another Module')
         })
         return super().changeform_view(request, object_id, form_url, extra_context)
 
