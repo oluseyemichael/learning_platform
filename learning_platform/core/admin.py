@@ -24,6 +24,15 @@ class LearningPathAdmin(admin.ModelAdmin):
 class ModuleAdmin(admin.ModelAdmin):
     list_display = ('module_name', 'learning_path', 'topic', 'video_link', 'blog_link')
     search_fields = ('module_name', 'topic')
+    save_on_top = True
+    save_as = True
+    
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        form.base_fields['_save'].label = "Generate Module"  # Main save button
+        form.base_fields['_addanother'].label = "Generate & Add Another Module"  # Save and add another
+        form.base_fields['_continue'].label = "Generate & Continue Editing"  # Save and continue editing
+        return form
 
 # Quiz Admin
 @admin.register(Quiz)
