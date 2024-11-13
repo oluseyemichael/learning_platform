@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import User, Course, LearningPath, Module, Quiz, Question, ModuleProgress, QuizProgress, CourseProgress, LearningPathProgress
+from .models import User, Course, LearningPath, Module, Quiz, Answer, Question, ModuleProgress, QuizProgress, CourseProgress, LearningPathProgress
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,24 +37,31 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = ['id', 'course_name', 'description', 'learning_paths']
 
 
-class ModuleSerializer(serializers.ModelSerializer):
+class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Module
-        fields = ['id', 'module_name', 'topic', 'video_link', 'blog_link']
-
-class QuizSerializer(serializers.ModelSerializer):
-    questions = serializers.StringRelatedField(many=True)
-
-    class Meta:
-        model = Quiz
-        fields = ['quiz_name', 'questions']
+        model = Answer
+        fields = ['id', 'answer_text', 'is_correct']
 
 class QuestionSerializer(serializers.ModelSerializer):
-    answers = serializers.StringRelatedField(many=True)
+    answers = AnswerSerializer(many=True)
 
     class Meta:
         model = Question
-        fields = ['question_text', 'answers']
+        fields = ['id', 'question_text', 'answers']
+
+class QuizSerializer(serializers.ModelSerializer):
+    questions = QuestionSerializer(many=True)
+
+    class Meta:
+        model = Quiz
+        fields = ['id', 'quiz_name', 'questions']
+
+class ModuleSerializer(serializers.ModelSerializer):
+    quiz = QuizSerializer(read_only=True)  # Include quiz data
+
+    class Meta:
+        model = Module
+        fields = ['id', 'module_name', 'topic', 'video_link', 'blog_link', 'quiz']
 
 class ModuleProgressSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
