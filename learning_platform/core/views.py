@@ -2,10 +2,11 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Q
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
-from .models import Course, LearningPath, Module, Quiz, Question, ModuleProgress, QuizProgress, CourseProgress, LearningPathProgress
+from .models import Course, LearningPath, Module, Quiz, Question, Answer, ModuleProgress, QuizProgress, CourseProgress, LearningPathProgress
 from .serializers import CourseSerializer, LearningPathSerializer, ModuleSerializer, QuizSerializer, UserSerializer, ModuleProgressSerializer, QuizProgressSerializer, CourseProgressSerializer
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -308,3 +309,41 @@ def get_course_progress(request, course_id):
         return Response(CourseProgressSerializer(course_progress).data)
     except CourseProgress.DoesNotExist:
         return Response({"error": "Course progress not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def submit_quiz(request, quiz_id):
+    try:
+        user = request.user
+        quiz = Quiz.objects.get(id=quiz_id)
+        answers = request.data.get('answers', [])
+
+        # Calculate score
+        total_questions = quiz.questions.count()
+        correct_answers = 0
+
+        for answer in answers:
+            question_id = answer['question_id']
+            answer_id = answer['answer_id']
+            is_correct = Answer.objects.filter(id=answer_id, question_id=question_id, is_correct=True).exists()
+            if is_correct:
+                correct_answers += 1
+
+        score = (correct_answers / total_questions) * 100 if total_questions > 0 else 0
+
+        # Save quiz progress
+        quiz_progress, created = QuizProgress.objects.update_or_create(
+            user=user,
+            quiz=quiz,
+            defaults={"score": score, "completed": score >= 70.0},
+        )
+
+        return Response({
+            "score": score,
+            "completed": quiz_progress.completed,
+        })
+
+    except Quiz.DoesNotExist:
+        return Response({"error": "Quiz not found"}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)

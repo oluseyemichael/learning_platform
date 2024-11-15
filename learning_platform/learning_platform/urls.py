@@ -54,6 +54,7 @@ urlpatterns = [
     # Explicit path for retrieving module details
     path('api/v1/modules/<int:pk>/', ModuleViewSet.as_view({'get': 'retrieve'}), name='module-detail'),  
     path('api/v1/module-by-name/<str:module_name>/', get_module_by_name, name='get_module_by_name'),
+    path('quizzes/<int:quiz_id>/submit/', submit_quiz, name='submit_quiz'),
     # Versioned router endpoint
     path('api/v1/', include(router.urls)),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
