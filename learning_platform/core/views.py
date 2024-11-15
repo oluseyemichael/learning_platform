@@ -21,6 +21,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework.decorators import action,  api_view, permission_classes
 from rest_framework import status
+from django.db.models import Prefetch
 import logging
 logger = logging.getLogger(__name__)
 
