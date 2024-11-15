@@ -255,7 +255,7 @@ def update_course_progress(request, course_id):
 @api_view(['GET'])
 def get_module_by_name(request, module_name):
     try:
-        module = Module.objects.get(module_name=module_name)
+        module = Module.objects.prefetch_related('quizzes__questions__answers').get(module_name=module_name)
         serializer = ModuleSerializer(module)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Module.DoesNotExist:
