@@ -57,11 +57,11 @@ class QuizSerializer(serializers.ModelSerializer):
         fields = ['id', 'quiz_name', 'questions']
 
 class ModuleSerializer(serializers.ModelSerializer):
-    quiz = QuizSerializer(many=True, source='quizs')  # Include quiz data
+    quiz = QuizSerializer(many=True, source='quiz')  # Include quiz data
 
     class Meta:
         model = Module
-        fields = ['id', 'module_name', 'topic', 'video_link', 'blog_link', 'quizs']
+        fields = ['id', 'module_name', 'topic', 'video_link', 'blog_link', 'quiz']
 
 class ModuleProgressSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
