@@ -255,11 +255,21 @@ def update_course_progress(request, course_id):
 @api_view(['GET'])
 def get_module_by_name(request, module_name):
     try:
-        module = Module.objects.prefetch_related('quiz__questions__answers').get(module_name=module_name)
+         # Prefetch quizzes and their related questions and answers
+        module = Module.objects.prefetch_related(
+            Prefetch(
+                'quizzes',
+                queryset=Quiz.objects.prefetch_related('questions__answers')
+            )
+        ).get(module_name=module_name)
         serializer = ModuleSerializer(module)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Module.DoesNotExist:
         return Response({'error': 'Module not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        # Log the error for debugging
+        print(f"Error fetching module: {str(e)}")
+        return Response({'error': 'An unexpected error occurred'}, status=500)
     
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
