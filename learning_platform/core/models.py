@@ -222,9 +222,10 @@ class QuizProgress(models.Model):
             completion_date=self.completion_date
         )
 
-        # Trigger module progress update
+        # Update module progress when quiz is passed
         module_progress = ModuleProgress.objects.filter(user=self.user, module=self.quiz.module).first()
         if module_progress:
+            module_progress.quiz_completed = self.completed
             module_progress.calculate_progress()
 
 
