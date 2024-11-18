@@ -207,7 +207,8 @@ class QuizProgressViewSet(viewsets.ModelViewSet):
         if user_id:
             return self.queryset.filter(user_id=user_id)
         return self.queryset
-class LearningPathProgressViewSet(ModelViewSet):
+    
+class LearningPathProgressViewSet(viewsets.ModelViewSet):
     queryset = LearningPathProgress.objects.all()
     serializer_class = LearningPathProgressSerializer
     permission_classes = [IsAuthenticated]
