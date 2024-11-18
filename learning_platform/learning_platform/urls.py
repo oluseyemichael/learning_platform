@@ -10,10 +10,10 @@ from drf_yasg import openapi
 from django.http import HttpResponseRedirect
 from rest_framework import permissions
 from core.views import (
-    CourseViewSet, ModuleViewSet, QuizViewSet, LearningPathViewSet,
+    CourseViewSet, ModuleViewSet, QuizViewSet, LearningPathViewSet, 
     RegisterView, LoginView, VerifyEmailView, PasswordResetRequestView,
     PasswordResetConfirmView, ModuleProgressViewSet, QuizProgressViewSet,
-    CourseProgressViewSet, get_user_profile, update_course_progress, get_module_by_name, submit_quiz
+    CourseProgressViewSet, get_user_profile, update_course_progress, get_module_by_name, submit_quiz, LearningPathProgressViewSe
 )
 
 # Versioned Router Setup for API
