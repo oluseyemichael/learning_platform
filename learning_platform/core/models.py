@@ -108,29 +108,24 @@ class ModuleProgress(models.Model):
     score = models.FloatField(null=True, blank=True)
 
     def calculate_progress(self):
-        """Calculate module progress and trigger updates for dependent objects."""
         self.completed = self.video_watched and (self.score or 0) >= 70.0
-        if self.completed and not self.completion_date:
+        if self.completed:
             self.completion_date = timezone.now()
         else:
             self.completion_date = None
 
-        # Update only the fields without triggering recursive saves
+        # Use `update` instead of `save`
         ModuleProgress.objects.filter(pk=self.pk).update(
             completed=self.completed,
             completion_date=self.completion_date
         )
 
-        # Trigger LearningPath and Course progress updates
+        # Trigger learning path progress update
         learning_path_progress = LearningPathProgress.objects.filter(
             user=self.user, learning_path=self.module.learning_path
         ).first()
         if learning_path_progress:
             learning_path_progress.calculate_progress()
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)  # Normal save
-        self.calculate_progress()
 
     def __str__(self):
         return f"{self.user.username} - {self.module.module_name} - {'Completed' if self.completed else 'In Progress'}"
@@ -215,21 +210,23 @@ class QuizProgress(models.Model):
     completion_date = models.DateTimeField(null=True, blank=True)
 
     def calculate_progress(self):
-        self.completed = self.score >= 70.0  # passing score of 70%
+        self.completed = self.score >= 70.0  # Passing score of 70%
         if self.completed:
             self.completion_date = timezone.now()
         else:
             self.completion_date = None
-        self.update()
 
-        # Trigger course progress update
-        course_progress = CourseProgress.objects.filter(user=self.user, course=self.quiz.module.learning_path.course).first()
-        if course_progress:
-            course_progress.calculate_progress()
+        # Use `update` instead of `save` to avoid recursion
+        QuizProgress.objects.filter(pk=self.pk).update(
+            completed=self.completed,
+            completion_date=self.completion_date
+        )
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.calculate_progress()
+        # Trigger module progress update
+        module_progress = ModuleProgress.objects.filter(user=self.user, module=self.quiz.module).first()
+        if module_progress:
+            module_progress.calculate_progress()
+
 
     def __str__(self):
         return f"{self.user.username} - {self.quiz.quiz_name} - {'Completed' if self.completed else 'In Progress'}"
