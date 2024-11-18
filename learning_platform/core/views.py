@@ -190,7 +190,7 @@ class ModuleProgressViewSet(viewsets.ModelViewSet):
     serializer_class = ModuleProgressSerializer
     permission_classes = [IsAuthenticated]
 
-    @action(detail=True, methods=['patch'])
+    @action(detail=True, methods=['patch'], url_path='update-progress')
     def update_progress(self, request, pk=None):
         user = request.user
         module = Module.objects.get(pk=pk)
