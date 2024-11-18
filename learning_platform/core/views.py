@@ -316,48 +316,54 @@ def submit_quiz(request, quiz_id):
     try:
         user = request.user
         quiz = Quiz.objects.get(id=quiz_id)
-        # Log incoming data
-        print(f"User: {user}, Quiz ID: {quiz_id}")
-        print(f"Request Data: {request.data}")
-        
-        answers = request.data.get('answers', [])
-        # Log answers received
-        print(f"Answers Received: {answers}")
 
-        # Calculate score
+        # Log incoming request
+        print(f"User: {user}, Quiz ID: {quiz_id}, Request Data: {request.data}")
+
+        answers = request.data.get('answers', [])
         total_questions = quiz.questions.count()
         correct_answers = 0
 
+        # Check and calculate correct answers
         for answer in answers:
             question_id = answer.get('question_id')
             answer_id = answer.get('answer_id')
-            
-            # Ensure valid data is being processed
-            print(f"Processing Question ID: {question_id}, Answer ID: {answer_id}")
 
-            if not question_id or not answer_id:
-                continue
-            
-            is_correct = Answer.objects.filter(id=answer_id, question_id=question_id, is_correct=True).exists()
-            if is_correct:
+            print(f"Checking Question ID: {question_id}, Answer ID: {answer_id}")
+
+            if Answer.objects.filter(
+                id=answer_id,
+                question_id=question_id,
+                is_correct=True
+            ).exists():
                 correct_answers += 1
-                
-        # Calculate score
-        score = (correct_answers / total_questions) * 100 if total_questions > 0 else 0
 
-        # Save quiz progress
-        quiz_progress, created = QuizProgress.objects.update_or_create(
+        # Calculate the score
+        score = (correct_answers / total_questions) * 100 if total_questions > 0 else 0
+        print(f"Correct Answers: {correct_answers}, Score: {score}")
+
+        # Update or create QuizProgress without triggering infinite recursion
+        quiz_progress, _ = QuizProgress.objects.update_or_create(
             user=user,
             quiz=quiz,
-            defaults={"score": score, "completed": score >= 70.0},
+            defaults={
+                "score": score,
+                "completed": score >= 70.0,
+                "completion_date": timezone.now() if score >= 70.0 else None
+            },
         )
 
-        return Response({
-            "score": score,
-            "completed": quiz_progress.completed,
-        })
+        print(f"QuizProgress Updated: {quiz_progress}")
+
+        # Avoid recursion in `CourseProgress` by calculating explicitly
+        course_progress = CourseProgress.objects.filter(user=user, course=quiz.module.learning_path.course).first()
+        if course_progress:
+            course_progress.calculate_progress()
+
+        return Response({"score": score, "completed": quiz_progress.completed})
 
     except Quiz.DoesNotExist:
         return Response({"error": "Quiz not found"}, status=404)
     except Exception as e:
+        print(f"Error in submit_quiz: {e}")
         return Response({"error": str(e)}, status=500)

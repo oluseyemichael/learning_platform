@@ -108,15 +108,104 @@ class ModuleProgress(models.Model):
     score = models.FloatField(null=True, blank=True)
 
     def calculate_progress(self):
-        # Calculate if the module is completed
+        """Calculate module progress and trigger updates for dependent objects."""
         self.completed = self.video_watched and (self.score or 0) >= 70.0
-        if self.completed:
+        if self.completed and not self.completion_date:
             self.completion_date = timezone.now()
-        self.save()
-        # Trigger course progress recalculation
-        course_progress = CourseProgress.objects.filter(user=self.user, course=self.module.learning_path.course).first()
+        else:
+            self.completion_date = None
+
+        # Update only the fields without triggering recursive saves
+        ModuleProgress.objects.filter(pk=self.pk).update(
+            completed=self.completed,
+            completion_date=self.completion_date
+        )
+
+        # Trigger LearningPath and Course progress updates
+        learning_path_progress = LearningPathProgress.objects.filter(
+            user=self.user, learning_path=self.module.learning_path
+        ).first()
+        if learning_path_progress:
+            learning_path_progress.calculate_progress()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # Normal save
+        self.calculate_progress()
+
+    def __str__(self):
+        return f"{self.user.username} - {self.module.module_name} - {'Completed' if self.completed else 'In Progress'}"
+
+class LearningPathProgress(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="learning_path_progress")
+    learning_path = models.ForeignKey(LearningPath, on_delete=models.CASCADE)
+    completed = models.BooleanField(default=False)
+    completion_date = models.DateTimeField(null=True, blank=True)
+    progress_percentage = models.FloatField(default=0.0)
+
+    def calculate_progress(self):
+        """Calculate learning path progress based on completed modules."""
+        total_modules = self.learning_path.modules.count()
+        completed_modules = ModuleProgress.objects.filter(
+            user=self.user, module__learning_path=self.learning_path, completed=True
+        ).count()
+
+        # Update progress percentage and completion status
+        if total_modules > 0:
+            self.progress_percentage = (completed_modules / total_modules) * 100
+            self.completed = self.progress_percentage == 100
+            if self.completed and not self.completion_date:
+                self.completion_date = timezone.now()
+            else:
+                self.completion_date = None
+
+            LearningPathProgress.objects.filter(pk=self.pk).update(
+                progress_percentage=self.progress_percentage,
+                completed=self.completed,
+                completion_date=self.completion_date
+            )
+
+        # Trigger Course progress update
+        course_progress = CourseProgress.objects.filter(
+            user=self.user, course=self.learning_path.course
+        ).first()
         if course_progress:
             course_progress.calculate_progress()
+
+    def __str__(self):
+        return f"{self.user.username} - {self.learning_path.path_name} - {self.progress_percentage}% Complete"
+
+class CourseProgress(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="course_progress")
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    completed = models.BooleanField(default=False)
+    completion_date = models.DateTimeField(null=True, blank=True)
+    progress_percentage = models.FloatField(default=0.0)
+
+    def calculate_progress(self):
+        """Calculate course progress based on completed learning paths."""
+        total_learning_paths = self.course.learning_paths.count()
+        completed_learning_paths = LearningPathProgress.objects.filter(
+            user=self.user, learning_path__course=self.course, completed=True
+        ).count()
+
+        # Update progress percentage and completion status
+        if total_learning_paths > 0:
+            self.progress_percentage = (completed_learning_paths / total_learning_paths) * 100
+            self.completed = self.progress_percentage == 100
+            if self.completed and not self.completion_date:
+                self.completion_date = timezone.now()
+            else:
+                self.completion_date = None
+
+            CourseProgress.objects.filter(pk=self.pk).update(
+                progress_percentage=self.progress_percentage,
+                completed=self.completed,
+                completion_date=self.completion_date
+            )
+
+    def __str__(self):
+        return f"{self.user.username} - {self.course.course_name} - {self.progress_percentage}% Complete"
+
 
 class QuizProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="quiz_progress")
@@ -145,49 +234,3 @@ class QuizProgress(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.quiz.quiz_name} - {'Completed' if self.completed else 'In Progress'}"
     
-class LearningPathProgress(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="learning_path_progress")
-    learning_path = models.ForeignKey(LearningPath, on_delete=models.CASCADE)
-    completed = models.BooleanField(default=False)
-    completion_date = models.DateTimeField(null=True, blank=True)
-    progress_percentage = models.FloatField(default=0.0)
-
-    def calculate_progress(self):
-        total_modules = self.learning_path.modules.count()
-        completed_modules = ModuleProgress.objects.filter(
-            user=self.user, module__learning_path=self.learning_path, completed=True
-        ).count()
-
-        if total_modules > 0:
-            self.progress_percentage = (completed_modules / total_modules) * 100
-            self.completed = self.progress_percentage == 100
-            if self.completed:
-                self.completion_date = timezone.now()
-            self.save()
-
-        # Trigger course progress update
-        course_progress = CourseProgress.objects.filter(
-            user=self.user, course=self.learning_path.course
-        ).first()
-        if course_progress:
-            course_progress.calculate_progress() 
-
-class CourseProgress(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="course_progress")
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    completed = models.BooleanField(default=False)
-    completion_date = models.DateTimeField(null=True, blank=True)
-    progress_percentage = models.FloatField(default=0.0)
-
-    def calculate_progress(self):
-        total_learning_paths = self.course.learning_paths.count()
-        completed_learning_paths = LearningPathProgress.objects.filter(
-            user=self.user, learning_path__course=self.course, completed=True
-        ).count()
-
-        if total_learning_paths > 0:
-            self.progress_percentage = (completed_learning_paths / total_learning_paths) * 100
-            self.completed = self.progress_percentage == 100
-            if self.completed:
-                self.completion_date = timezone.now()
-            self.save()
