@@ -77,13 +77,28 @@ class QuizProgressSerializer(serializers.ModelSerializer):
         fields = ['user', 'quiz', 'score', 'completed', 'completion_date']
 
 class LearningPathProgressSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField()
-    learning_path = serializers.StringRelatedField()
-    modules_progress = ModuleProgressSerializer(many=True, source='module_progress_set')
+    learning_path_name = serializers.SerializerMethodField()
+    course_name = serializers.SerializerMethodField()
 
     class Meta:
         model = LearningPathProgress
-        fields = ['id', 'user', 'learning_path', 'completed', 'completion_date', 'progress_percentage', 'modules_progress']
+        fields = [
+            'id', 
+            'user', 
+            'learning_path', 
+            'learning_path_name',
+            'course_name',
+            'completed', 
+            'completion_date', 
+            'progress_percentage'
+        ]
+        read_only_fields = ['completion_date']
+
+    def get_learning_path_name(self, obj):
+        return obj.learning_path.path_name
+
+    def get_course_name(self, obj):
+        return obj.learning_path.course.name
         
 class CourseProgressSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()

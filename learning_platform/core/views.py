@@ -227,6 +227,18 @@ class LearningPathProgressViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return self.queryset.filter(user=user)  # Return progress for the logged-in user
+
+    def retrieve(self, request, pk=None):
+        try:
+            # Ensure the user can only access their own progress
+            instance = self.get_queryset().get(pk=pk, user=request.user)
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        except LearningPathProgress.DoesNotExist:
+            return Response(
+                {"detail": "Learning path progress not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
     
 # Course Progress ViewSet
 class CourseProgressViewSet(viewsets.ModelViewSet):
