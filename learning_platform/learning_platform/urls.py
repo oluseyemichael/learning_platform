@@ -25,6 +25,7 @@ router.register(r'learning-paths', LearningPathViewSet, basename='learning_path'
 router.register(r'module-progress', ModuleProgressViewSet, basename='moduleprogress')
 router.register(r'quiz-progress', QuizProgressViewSet, basename='quizprogress')
 router.register(r'course-progress', CourseProgressViewSet, basename='courseprogress')
+router.register(r'learning-path-progress', LearningPathProgressViewSet, basename='learning-path-progress')
 
 # Swagger schema view
 schema_view = get_schema_view(

@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from .models import Course, LearningPath, Module, Quiz, Question, Answer, ModuleProgress, QuizProgress, CourseProgress, LearningPathProgress
-from .serializers import CourseSerializer, LearningPathSerializer, ModuleSerializer, QuizSerializer, UserSerializer, ModuleProgressSerializer, QuizProgressSerializer, CourseProgressSerializer
+from .serializers import CourseSerializer, LearningPathSerializer, ModuleSerializer, QuizSerializer, UserSerializer, ModuleProgressSerializer, QuizProgressSerializer, CourseProgressSerializer, LearningPathProgressSerializer
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
@@ -207,7 +207,15 @@ class QuizProgressViewSet(viewsets.ModelViewSet):
         if user_id:
             return self.queryset.filter(user_id=user_id)
         return self.queryset
+class LearningPathProgressViewSet(ModelViewSet):
+    queryset = LearningPathProgress.objects.all()
+    serializer_class = LearningPathProgressSerializer
+    permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        user = self.request.user
+        return self.queryset.filter(user=user)  # Return progress for the logged-in user
+    
 # Course Progress ViewSet
 class CourseProgressViewSet(viewsets.ModelViewSet):
     queryset = CourseProgress.objects.all()
