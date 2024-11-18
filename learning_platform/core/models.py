@@ -220,7 +220,7 @@ class QuizProgress(models.Model):
             self.completion_date = timezone.now()
         else:
             self.completion_date = None
-        self.save()
+        self.update()
 
         # Trigger course progress update
         course_progress = CourseProgress.objects.filter(user=self.user, course=self.quiz.module.learning_path.course).first()
