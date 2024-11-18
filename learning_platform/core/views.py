@@ -230,27 +230,24 @@ class LearningPathProgressViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, pk=None):
         try:
-            # Try to get existing progress
-            instance = self.get_queryset().get(pk=pk, user=request.user)
-            serializer = self.get_serializer(instance)
-            return Response(serializer.data)
-        except LearningPathProgress.DoesNotExist:
-            # If no progress exists, create a new one with 0% progress
-            try:
-                learning_path = LearningPath.objects.get(pk=pk)
-                new_progress = LearningPathProgress.objects.create(
-                    user=request.user, 
-                    learning_path=learning_path,
-                    progress_percentage=0.0,
-                    completed=False
-                )
-                serializer = self.get_serializer(new_progress)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            except LearningPath.DoesNotExist:
-                return Response(
-                    {"detail": "Learning path not found"},
-                    status=status.HTTP_404_NOT_FOUND
-                )
+            # Get the learning path instance
+            learning_path = LearningPath.objects.get(pk=pk)
+        except LearningPath.DoesNotExist:
+            return Response(
+                {"detail": "Learning path not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Check if progress exists
+        progress, created = LearningPathProgress.objects.get_or_create(
+            user=request.user, 
+            learning_path=learning_path,
+            defaults={"progress_percentage": 0.0, "completed": False}
+        )
+
+        serializer = self.get_serializer(progress)
+        return Response(serializer.data, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
+
     
 # Course Progress ViewSet
 class CourseProgressViewSet(viewsets.ModelViewSet):
