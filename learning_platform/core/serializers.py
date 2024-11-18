@@ -83,7 +83,7 @@ class LearningPathProgressSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LearningPathProgress
-        fields = ['user', 'learning_path', 'completed', 'completion_date', 'progress_percentage', 'modules_progress']
+        fields = ['id', 'user', 'learning_path', 'completed', 'completion_date', 'progress_percentage', 'modules_progress']
         
 class CourseProgressSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
