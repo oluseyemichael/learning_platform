@@ -316,19 +316,33 @@ def submit_quiz(request, quiz_id):
     try:
         user = request.user
         quiz = Quiz.objects.get(id=quiz_id)
+        # Log incoming data
+        print(f"User: {user}, Quiz ID: {quiz_id}")
+        print(f"Request Data: {request.data}")
+        
         answers = request.data.get('answers', [])
+        # Log answers received
+        print(f"Answers Received: {answers}")
 
         # Calculate score
         total_questions = quiz.questions.count()
         correct_answers = 0
 
         for answer in answers:
-            question_id = answer['question_id']
-            answer_id = answer['answer_id']
+            question_id = answer.get('question_id')
+            answer_id = answer.get('answer_id')
+            
+            # Ensure valid data is being processed
+            print(f"Processing Question ID: {question_id}, Answer ID: {answer_id}")
+
+            if not question_id or not answer_id:
+                continue
+            
             is_correct = Answer.objects.filter(id=answer_id, question_id=question_id, is_correct=True).exists()
             if is_correct:
                 correct_answers += 1
-
+                
+        # Calculate score
         score = (correct_answers / total_questions) * 100 if total_questions > 0 else 0
 
         # Save quiz progress
