@@ -190,11 +190,22 @@ class ModuleProgressViewSet(viewsets.ModelViewSet):
     serializer_class = ModuleProgressSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        user_id = self.request.query_params.get('user')
-        if user_id:
-            return self.queryset.filter(user_id=user_id)
-        return self.queryset
+    @action(detail=True, methods=['patch'])
+    def update_progress(self, request, pk=None):
+        user = request.user
+        module = Module.objects.get(pk=pk)
+        
+        # Use `update_or_create` to ensure progress exists
+        progress, created = ModuleProgress.objects.update_or_create(
+            user=user,
+            module=module,
+            defaults=request.data  # Pass data to update fields
+        )
+
+        return Response(
+            ModuleProgressSerializer(progress).data,
+            status=status.HTTP_200_OK
+        )
 
 # Quiz Progress ViewSet
 class QuizProgressViewSet(viewsets.ModelViewSet):
