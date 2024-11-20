@@ -110,7 +110,7 @@ class ModuleProgress(models.Model):
 
     def calculate_progress(self):
         """Calculate module completion progress."""
-        self.completed = self.video_watched and (self.score or 0) >= 70.0
+        self.completed = self.video_watched and self.quiz_completed
         if self.completed:
             self.completion_date = timezone.now()
         else:
