@@ -187,7 +187,7 @@ class LearningPathProgress(models.Model):
 
 
 
-class CourseProgress(models.Model):
+cclass CourseProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="course_progress")
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     completed = models.BooleanField(default=False)
@@ -195,32 +195,47 @@ class CourseProgress(models.Model):
     progress_percentage = models.FloatField(default=0.0)
 
     def calculate_progress(self):
-        """Calculate course progress based on learning path progress."""
-        learning_paths = self.course.learning_paths.all()
-        total_learning_paths = learning_paths.count()
+        """Calculate course progress based on completed learning paths."""
+        total_learning_paths = self.course.learning_paths.count()
+        completed_learning_paths = 0
+        total_progress = 0
 
-        # Calculate progress by summing the percentages of all learning paths
-        total_progress = sum(
-            LearningPathProgress.objects.filter(
-                user=self.user, learning_path=lp
-            ).first().progress_percentage or 0
-            for lp in learning_paths
-        )
+        for learning_path in self.course.learning_paths.all():
+            # Get the progress for each learning path
+            learning_path_progress = LearningPathProgress.objects.filter(
+                learning_path=learning_path, user=self.user
+            ).first()
 
+            if learning_path_progress:
+                total_progress += learning_path_progress.progress_percentage
+                if learning_path_progress.completed:
+                    completed_learning_paths += 1
+            else:
+                # If no progress is found for this learning path, handle appropriately (e.g., default to 0%)
+                total_progress += 0
+
+        # Calculate overall course progress
         if total_learning_paths > 0:
-            self.progress_percentage = round(total_progress / total_learning_paths)
+            self.progress_percentage = total_progress / total_learning_paths
             self.completed = self.progress_percentage == 100
             self.completion_date = timezone.now() if self.completed else None
 
-        self.save()
-        print(f"[DEBUG] CourseProgress Updated: {self.progress_percentage}% - Completed: {self.completed}")
+        # Save the course progress after calculating
+        CourseProgress.objects.filter(pk=self.pk).update(
+            progress_percentage=self.progress_percentage,
+            completed=self.completed,
+            completion_date=self.completion_date
+        )
 
+        print(f"[DEBUG] Course Progress Updated: {self.progress_percentage}% - Completed: {self.completed}")
+        
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.calculate_progress()
+    super().save(*args, **kwargs)
+    self.calculate_progress()
 
     def __str__(self):
         return f"{self.user.username} - {self.course.course_name} - {self.progress_percentage}% Complete"
+
 
 
 
