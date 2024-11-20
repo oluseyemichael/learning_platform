@@ -13,7 +13,7 @@ from core.views import (
     CourseViewSet, ModuleViewSet, QuizViewSet, LearningPathViewSet, 
     RegisterView, LoginView, VerifyEmailView, PasswordResetRequestView,
     PasswordResetConfirmView, ModuleProgressViewSet, QuizProgressViewSet,
-    CourseProgressViewSet, get_user_profile, update_course_progress, get_module_by_name, submit_quiz, LearningPathProgressViewSet
+    CourseProgressViewSet, get_user_profile, update_course_progress, get_module_by_name, submit_quiz, LearningPathProgressViewSet, get_module_progress
 )
 
 # Versioned Router Setup for API
