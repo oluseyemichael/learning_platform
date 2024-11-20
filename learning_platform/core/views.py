@@ -355,10 +355,17 @@ def get_module_progress(request):
     if not learning_path_id:
         return Response({"detail": "Learning path ID is required"}, status=400)
 
+    # Filter progress by logged-in user and the specified learning path
     progress = ModuleProgress.objects.filter(
         user=request.user,
         module__learning_path_id=learning_path_id
-    ).values("module__module_name", "completed")
+    ).values(
+        "module__module_name", 
+        "completed", 
+        "completion_date", 
+        "video_watched", 
+        "quiz_completed"
+    )
 
     return Response(progress, status=200)
 
