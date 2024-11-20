@@ -140,7 +140,7 @@ class ModuleProgress(models.Model):
 
 class LearningPathProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="learning_path_progress")
-    learning_path = models.ForeignKey(LearningPath, on_delete=models.CASCADE)
+    learning_path = models.ForeignKey(LearningPath, on_delete=models.CASCADE, related_name="progress")
     completed = models.BooleanField(default=False)
     completion_date = models.DateTimeField(null=True, blank=True)
     progress_percentage = models.FloatField(default=0.0)
@@ -192,25 +192,25 @@ class CourseProgress(models.Model):
     progress_percentage = models.FloatField(default=0.0)
 
     def calculate_progress(self):
-        """Calculate course progress based on completed learning paths."""
-        total_learning_paths = self.course.learning_paths.count()
-        completed_learning_paths = LearningPathProgress.objects.filter(
-            user=self.user, learning_path__course=self.course, completed=True
-        ).count()
+        """Calculate course progress based on learning path progress."""
+        learning_paths = self.course.learning_paths.all()
+        total_learning_paths = learning_paths.count()
 
-        print(f"[DEBUG] Course: {self.course.course_name} - Completed Learning Paths: {completed_learning_paths}/{total_learning_paths}")
+        # Calculate progress by summing the percentages of all learning paths
+        total_progress = sum(
+            LearningPathProgress.objects.filter(
+                user=self.user, learning_path=lp
+            ).first().progress_percentage or 0
+            for lp in learning_paths
+        )
 
         if total_learning_paths > 0:
-            self.progress_percentage = (completed_learning_paths / total_learning_paths) * 100
+            self.progress_percentage = round(total_progress / total_learning_paths)
             self.completed = self.progress_percentage == 100
             self.completion_date = timezone.now() if self.completed else None
 
-            CourseProgress.objects.filter(pk=self.pk).update(
-                progress_percentage=self.progress_percentage,
-                completed=self.completed,
-                completion_date=self.completion_date
-            )
-            print(f"[DEBUG] Course Progress Updated: {self.progress_percentage}% - Completed: {self.completed}")
+        self.save()
+        print(f"[DEBUG] CourseProgress Updated: {self.progress_percentage}% - Completed: {self.completed}")
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

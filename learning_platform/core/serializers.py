@@ -96,7 +96,7 @@ class LearningPathProgressSerializer(serializers.ModelSerializer):
 class CourseProgressSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
     course = serializers.StringRelatedField()
-    learning_path_progress = LearningPathProgressSerializer(many=True, source='learning_path_progress_set')
+    learning_path_progress = serializers.SerializerMethodField()
 
     class Meta:
         model = CourseProgress
@@ -111,6 +111,9 @@ class CourseProgressSerializer(serializers.ModelSerializer):
         ]
         
     def get_learning_path_progress(self, obj):
-        """Calculate and return related learning path progress."""
-        progress = LearningPathProgress.objects.filter(user=obj.user, learning_path__course=obj.course)
-        return LearningPathProgressSerializer(progress, many=True).data
+        """Fetch progress for all learning paths in this course."""
+        learning_paths = obj.course.learning_paths.all()
+        progress_data = LearningPathProgress.objects.filter(
+            user=obj.user, learning_path__in=learning_paths
+        )
+        return LearningPathProgressSerializer(progress_data, many=True).data
