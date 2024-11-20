@@ -100,4 +100,17 @@ class CourseProgressSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CourseProgress
-        fields = ['user', 'course', 'completed', 'completion_date', 'progress_percentage', 'learning_paths_progress']
+        fields = [
+            'id',
+            'user',
+            'course',
+            'completed',
+            'completion_date',
+            'progress_percentage',
+            'learning_path_progress',
+        ]
+        
+    def get_learning_path_progress(self, obj):
+        """Calculate and return related learning path progress."""
+        progress = LearningPathProgress.objects.filter(user=obj.user, learning_path__course=obj.course)
+        return LearningPathProgressSerializer(progress, many=True).data

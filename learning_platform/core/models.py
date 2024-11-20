@@ -155,7 +155,8 @@ class LearningPathProgress(models.Model):
         print(f"[DEBUG] Learning Path: {self.learning_path.path_name} - Completed Modules: {completed_modules}/{total_modules}")
 
         if total_modules > 0:
-            self.progress_percentage = (completed_modules / total_modules) * 100
+            # Round progress percentage to the nearest whole number
+            self.progress_percentage = round((completed_modules / total_modules) * 100)
             self.completed = self.progress_percentage == 100
             self.completion_date = timezone.now() if self.completed else None
 
@@ -170,6 +171,8 @@ class LearningPathProgress(models.Model):
         course_progress, created = CourseProgress.objects.get_or_create(
             user=self.user, course=self.learning_path.course
         )
+        if created:
+            print(f"[DEBUG] Created new Course Progress for {self.course.course_name}")
         course_progress.calculate_progress()
 
     def save(self, *args, **kwargs):
