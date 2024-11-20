@@ -6,6 +6,7 @@ from .services.blog_service import get_blog_posts
 from django.core.validators import EmailValidator
 from django.utils import timezone
 from django.db.models import Q
+import math
 
 
 # User model
@@ -160,6 +161,7 @@ class LearningPathProgress(models.Model):
             self.completed = self.progress_percentage == 100
             self.completion_date = timezone.now() if self.completed else None
 
+            # Update learning path progress
             LearningPathProgress.objects.filter(pk=self.pk).update(
                 progress_percentage=self.progress_percentage,
                 completed=self.completed,
@@ -172,7 +174,7 @@ class LearningPathProgress(models.Model):
             user=self.user, course=self.learning_path.course
         )
         if created:
-            print(f"[DEBUG] Created new Course Progress for {self.course.course_name}")
+            print(f"[DEBUG] Created new Course Progress for {self.learning_path.course.course_name}")
         course_progress.calculate_progress()
 
     def save(self, *args, **kwargs):
@@ -182,6 +184,7 @@ class LearningPathProgress(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.learning_path.path_name} - {self.progress_percentage}% Complete"
+
 
 
 class CourseProgress(models.Model):
