@@ -187,7 +187,7 @@ class LearningPathProgress(models.Model):
 
 
 
-cclass CourseProgress(models.Model):
+class CourseProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="course_progress")
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     completed = models.BooleanField(default=False)
@@ -230,8 +230,8 @@ cclass CourseProgress(models.Model):
         print(f"[DEBUG] Course Progress Updated: {self.progress_percentage}% - Completed: {self.completed}")
         
     def save(self, *args, **kwargs):
-    super().save(*args, **kwargs)
-    self.calculate_progress()
+        super().save(*args, **kwargs)
+        self.calculate_progress()
 
     def __str__(self):
         return f"{self.user.username} - {self.course.course_name} - {self.progress_percentage}% Complete"
