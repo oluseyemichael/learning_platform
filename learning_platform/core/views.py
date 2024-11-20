@@ -261,41 +261,41 @@ class CourseProgressViewSet(viewsets.ModelViewSet):
             return self.queryset.filter(user_id=user_id)
         return self.queryset
 
-# @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-# def get_user_profile(request):
-#     """Fetch user profile data including course progress."""
-#     user = request.user
-#     user_data = {
-#         "username": user.username,
-#         "email": user.email,
-#     }
-
-#     # Fetch course progress data for the user
-#     progress_data = CourseProgress.objects.filter(user=user)
-#     progress_serialized = CourseProgressSerializer(progress_data, many=True).data
-
-#     user_data["progress_data"] = progress_serialized
-#     return Response(user_data)
-
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_user_profile(request):
     """Fetch user profile data including course progress."""
     user = request.user
-    try:
-        progress_data = CourseProgress.objects.filter(user=user)
-        progress_serialized = CourseProgressSerializer(progress_data, many=True).data
+    user_data = {
+        "username": user.username,
+        "email": user.email,
+    }
 
-        return Response({
-            "user": {
-                "username": user.username,
-                "email": user.email,
-            },
-            "progress": progress_serialized
-        })
-    except Exception as e:
-        print(f"[ERROR] {str(e)}")
-        return Response({"error": "Failed to fetch user profile"}, status=500)
+    # Fetch course progress data for the user
+    progress_data = CourseProgress.objects.filter(user=user)
+    progress_serialized = CourseProgressSerializer(progress_data, many=True).data
+
+    user_data["progress_data"] = progress_serialized
+    return Response(user_data)
+
+# @api_view(['GET'])
+# def get_user_profile(request):
+#     """Fetch user profile data including course progress."""
+#     user = request.user
+#     try:
+#         progress_data = CourseProgress.objects.filter(user=user)
+#         progress_serialized = CourseProgressSerializer(progress_data, many=True).data
+
+#         return Response({
+#             "user": {
+#                 "username": user.username,
+#                 "email": user.email,
+#             },
+#             "progress": progress_serialized
+#         })
+#     except Exception as e:
+#         print(f"[ERROR] {str(e)}")
+#         return Response({"error": "Failed to fetch user profile"}, status=500)
 
 
 @api_view(['PATCH'])
