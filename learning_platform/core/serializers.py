@@ -96,7 +96,7 @@ class LearningPathProgressSerializer(serializers.ModelSerializer):
 class CourseProgressSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
     course = serializers.StringRelatedField()
-    learning_paths_progress = LearningPathProgressSerializer(many=True, source='learning_path_progress_set')
+    learning_path_progress = LearningPathProgressSerializer(many=True, source='learning_path_progress_set')
 
     class Meta:
         model = CourseProgress
