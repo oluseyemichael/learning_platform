@@ -370,6 +370,7 @@ def get_module_progress(request):
         "video_watched",
         "quiz_completed"
     )
+    print(f"[DEBUG] Raw Progress Queryset for User {request.user}: {progress}")
     
     # Ensure the response is filtered for the logged-in user
     return Response(list(progress), status=200)
