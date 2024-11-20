@@ -351,23 +351,28 @@ def update_module_progress(request, module_id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_module_progress(request):
-    learning_path_id = request.query_params.get('learning_path')
+    learning_path_id = request.query_params.get('learning_path')  # Get the learning path ID from the query parameters
+    
     if not learning_path_id:
         return Response({"detail": "Learning path ID is required"}, status=400)
-
-    # Filter progress by logged-in user and the specified learning path
+    
+    # Filter for the logged-in user and the specific learning path
     progress = ModuleProgress.objects.filter(
-        user=request.user,
-        module__learning_path_id=learning_path_id
+        user=request.user,  # Filter by logged-in user
+        module__learning_path_id=learning_path_id  # Filter by the learning path
     ).values(
-        "module__module_name", 
-        "completed", 
-        "completion_date", 
-        "video_watched", 
+        "module__module_name",  # Include only relevant fields
+        "completed",
+        "completion_date",
+        "video_watched",
         "quiz_completed"
     )
+    
+    if not progress.exists():
+        return Response({"detail": "No progress found for this learning path"}, status=404)
 
-    return Response(progress, status=200)
+    return Response(list(progress), status=200)
+
 
 
 @api_view(['POST'])
