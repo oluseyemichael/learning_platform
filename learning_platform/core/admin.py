@@ -74,3 +74,10 @@ class CourseProgressAdmin(admin.ModelAdmin):
     list_display = ('user', 'course', 'completed', 'completion_date', 'progress_percentage')
     search_fields = ('user__username', 'course__course_name')
     list_filter = ('completed',)
+    
+@admin.register(LearningPathProgress)
+class LearningPathProgressAdmin(admin.ModelAdmin):
+    list_display = ('user', 'learning_path', 'progress_percentage', 'completed', 'completion_date')
+    search_fields = ('user__username', 'learning_path__path_name')
+    list_filter = ('completed',)
+    readonly_fields = ('progress_percentage', 'completed', 'completion_date')
