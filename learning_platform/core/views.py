@@ -278,24 +278,6 @@ def get_user_profile(request):
     user_data["progress_data"] = progress_serialized
     return Response(user_data)
 
-# @api_view(['GET'])
-# def get_user_profile(request):
-#     """Fetch user profile data including course progress."""
-#     user = request.user
-#     try:
-#         progress_data = CourseProgress.objects.filter(user=user)
-#         progress_serialized = CourseProgressSerializer(progress_data, many=True).data
-
-#         return Response({
-#             "user": {
-#                 "username": user.username,
-#                 "email": user.email,
-#             },
-#             "progress": progress_serialized
-#         })
-#     except Exception as e:
-#         print(f"[ERROR] {str(e)}")
-#         return Response({"error": "Failed to fetch user profile"}, status=500)
 
 
 @api_view(['PATCH'])
@@ -355,25 +337,27 @@ def get_module_progress(request):
     Retrieve module progress for the logged-in user for a specific learning path.
     """
     learning_path_id = request.query_params.get('learning_path')  # Get learning path ID from query params
-    
+    print(f"[DEBUG] Received learning_path_id: {learning_path_id}")
+    print(f"[DEBUG] Authenticated User: {request.user}")
+
     if not learning_path_id:
+        print("[DEBUG] Missing learning_path_id")
         return Response({"detail": "Learning path ID is required"}, status=400)
-    
-    # Filter progress by the logged-in user and the specific learning path
+
     progress = ModuleProgress.objects.filter(
-        user=request.user,  # Filter by the logged-in user
-        module__learning_path_id=learning_path_id  # Filter by the specified learning path
+        user=request.user, 
+        module__learning_path_id=learning_path_id
     ).values(
-        "module__module_name",  # Return only relevant fields
+        "module__module_name",
         "completed",
         "completion_date",
         "video_watched",
         "quiz_completed"
     )
-    print(f"[DEBUG] Raw Progress Queryset for User {request.user}: {progress}")
-    
-    # Ensure the response is filtered for the logged-in user
+
+    print(f"[DEBUG] Module Progress Data for {request.user}: {progress}")
     return Response(list(progress), status=200)
+
 
 
 
