@@ -348,6 +348,21 @@ def update_module_progress(request, module_id):
     except Module.DoesNotExist:
         return Response({"error": "Module not found"}, status=status.HTTP_404_NOT_FOUND)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_module_progress(request):
+    learning_path_id = request.query_params.get('learning_path')
+    if not learning_path_id:
+        return Response({"detail": "Learning path ID is required"}, status=400)
+
+    progress = ModuleProgress.objects.filter(
+        user=request.user,
+        module__learning_path_id=learning_path_id
+    ).values("module__module_name", "completed")
+
+    return Response(progress, status=200)
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def update_quiz_score(request, quiz_id):
