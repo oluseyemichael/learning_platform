@@ -119,6 +119,7 @@ class ModuleProgress(models.Model):
             completed=self.completed,
             completion_date=self.completion_date
         )
+        print(f"Module {self.module.module_name} marked as {'completed' if self.completed else 'incomplete'}.")
 
         # Trigger learning path progress update
         learning_path_progress = LearningPathProgress.objects.filter(
@@ -143,21 +144,23 @@ class LearningPathProgress(models.Model):
         completed_modules = ModuleProgress.objects.filter(
             user=self.user, module__learning_path=self.learning_path, completed=True
         ).count()
+        
+        # Log current and new progress
+        print(f"Calculating progress for {self.user.username}: {completed_modules}/{total_modules} modules completed.")
 
         # Update progress percentage and completion status
         if total_modules > 0:
             self.progress_percentage = (completed_modules / total_modules) * 100
             self.completed = self.progress_percentage == 100
-            if self.completed and not self.completion_date:
-                self.completion_date = timezone.now()
-            else:
-                self.completion_date = None
+            self.completion_date = timezone.now() if self.completed else None
 
             LearningPathProgress.objects.filter(pk=self.pk).update(
                 progress_percentage=self.progress_percentage,
                 completed=self.completed,
                 completion_date=self.completion_date
             )
+            print(f"Updated progress: {self.progress_percentage}% (Completed: {self.completed})")
+                
 
         # Trigger Course progress update
         course_progress = CourseProgress.objects.filter(
