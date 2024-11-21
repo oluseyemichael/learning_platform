@@ -267,8 +267,8 @@ class CourseProgressViewSet(viewsets.ModelViewSet):
         Retrieve progress for a specific course by ID.
         """
         try:
-            # Fetch course progress for the specific user and course
-            course_progress = self.get_queryset().get(course_id=pk)
+            # Use pk instead of course_id
+            course_progress = self.get_queryset().get(course=pk)
             course_progress.calculate_progress()  # Update progress if needed
             return Response(CourseProgressSerializer(course_progress).data)
         except CourseProgress.DoesNotExist:
