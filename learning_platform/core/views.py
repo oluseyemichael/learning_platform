@@ -378,12 +378,22 @@ def update_quiz_score(request, quiz_id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_course_progress(request, course_id):
+    """
+    Retrieve course progress for the logged-in user for a specific course.
+    """
     try:
+        # Fetch the course progress for the current user and course
         course_progress = CourseProgress.objects.get(user=request.user, course_id=course_id)
-        course_progress.calculate_progress()
+        course_progress.calculate_progress()  # Ensure progress is updated
+
+        # Serialize and return the course progress
         return Response(CourseProgressSerializer(course_progress).data)
     except CourseProgress.DoesNotExist:
         return Response({"error": "Course progress not found"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        print(f"Error fetching course progress: {e}")
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
