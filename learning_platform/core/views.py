@@ -24,6 +24,7 @@ from rest_framework.decorators import action,  api_view, permission_classes
 from rest_framework import status
 from django.utils import timezone
 from django.db.models import Prefetch
+from rest_framework.exceptions import NotFound
 import logging
 logger = logging.getLogger(__name__)
 
@@ -256,10 +257,23 @@ class CourseProgressViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user_id = self.request.query_params.get('user')
-        if user_id:
-            return self.queryset.filter(user_id=user_id)
-        return self.queryset
+        """
+        Return the queryset for the logged-in user.
+        """
+        user = self.request.user
+        return self.queryset.filter(user=user)
+
+    def retrieve(self, request, pk=None):
+        """
+        Retrieve a specific course progress instance by course_id.
+        """
+        try:
+            # Ensure the logged-in user can only access their own progress
+            course_progress = self.get_queryset().get(course_id=pk)
+            course_progress.calculate_progress()
+            return Response(CourseProgressSerializer(course_progress).data)
+        except CourseProgress.DoesNotExist:
+            raise NotFound({"error": "Course progress not found"})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -375,24 +389,6 @@ def update_quiz_score(request, quiz_id):
     except Quiz.DoesNotExist:
         return Response({"error": "Quiz not found"}, status=status.HTTP_404_NOT_FOUND)
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_course_progress(request, course_id):
-    """
-    Retrieve course progress for the logged-in user for a specific course.
-    """
-    try:
-        # Fetch the course progress for the current user and course
-        course_progress = CourseProgress.objects.get(user=request.user, course_id=course_id)
-        course_progress.calculate_progress()  # Ensure progress is updated
-
-        # Serialize and return the course progress
-        return Response(CourseProgressSerializer(course_progress).data)
-    except CourseProgress.DoesNotExist:
-        return Response({"error": "Course progress not found"}, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
-        print(f"Error fetching course progress: {e}")
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     
 @api_view(['POST'])
