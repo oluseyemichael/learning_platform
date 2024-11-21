@@ -255,7 +255,7 @@ class CourseProgressViewSet(viewsets.ModelViewSet):
     queryset = CourseProgress.objects.all()
     serializer_class = CourseProgressSerializer
     permission_classes = [IsAuthenticated]
-     http_method_names = ['get', 'post', 'put', 'delete', 'patch']  # Enable GET for retrieve
+    http_method_names = ['get', 'post', 'put', 'delete', 'patch']  # Enable GET for retrieve
 
     def get_queryset(self):
         """
