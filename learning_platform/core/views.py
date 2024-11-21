@@ -25,6 +25,7 @@ from rest_framework import status
 from django.utils import timezone
 from django.db.models import Prefetch
 from rest_framework.exceptions import NotFound
+from rest_framework.decorators import action
 import logging
 logger = logging.getLogger(__name__)
 
@@ -255,26 +256,28 @@ class CourseProgressViewSet(viewsets.ModelViewSet):
     queryset = CourseProgress.objects.all()
     serializer_class = CourseProgressSerializer
     permission_classes = [IsAuthenticated]
-    http_method_names = ['get', 'post', 'put', 'delete', 'patch']  # Enable GET for retrieve
 
     def get_queryset(self):
-        """
-        Return the queryset for the logged-in user.
-        """
+        # Limit the queryset to the logged-in user's data
         user = self.request.user
         return self.queryset.filter(user=user)
 
     def retrieve(self, request, pk=None):
         """
-        Retrieve a specific course progress instance by course_id.
+        Retrieve progress for a specific course by ID.
         """
         try:
-            # Ensure the logged-in user can only access their own progress
+            # Fetch course progress for the specific user and course
             course_progress = self.get_queryset().get(course_id=pk)
-            course_progress.calculate_progress()
+            course_progress.calculate_progress()  # Update progress if needed
             return Response(CourseProgressSerializer(course_progress).data)
         except CourseProgress.DoesNotExist:
-            raise NotFound({"error": "Course progress not found"})
+            return Response({"error": "Course progress not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            print(f"Error fetching course progress: {e}")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
