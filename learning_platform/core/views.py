@@ -262,13 +262,13 @@ class CourseProgressViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return self.queryset.filter(user=user)
 
-    def retrieve(self, request, pk=None):
+    def retrieve(self, request, course_id=None):
         """
         Retrieve progress for a specific course by ID.
         """
         try:
-            # Use pk instead of course_id
-            course_progress = self.get_queryset().get(course=pk)
+            # Use course_id instead of pk
+            course_progress = self.get_queryset().get(course=course_id)
             course_progress.calculate_progress()  # Update progress if needed
             return Response(CourseProgressSerializer(course_progress).data)
         except CourseProgress.DoesNotExist:
@@ -276,7 +276,6 @@ class CourseProgressViewSet(viewsets.ModelViewSet):
         except Exception as e:
             print(f"Error fetching course progress: {e}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 
 @api_view(['GET'])
