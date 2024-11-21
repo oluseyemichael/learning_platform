@@ -442,3 +442,21 @@ def submit_quiz(request, quiz_id):
     except Exception as e:
         print(f"Error in submit_quiz: {e}")
         return Response({"error": str(e)}, status=500)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_next_learning_path(request, current_learning_path_id):
+    try:
+        current_path = LearningPath.objects.get(id=current_learning_path_id)
+        next_path = LearningPath.objects.filter(
+            course=current_path.course,
+            id__gt=current_path.id  # Assuming IDs represent order
+        ).order_by('id').first()
+
+        if next_path:
+            serializer = LearningPathSerializer(next_path)
+            return Response(serializer.data, status=200)
+        else:
+            return Response({"detail": "No more learning paths available"}, status=404)
+    except LearningPath.DoesNotExist:
+        return Response({"error": "Current learning path not found"}, status=404)
