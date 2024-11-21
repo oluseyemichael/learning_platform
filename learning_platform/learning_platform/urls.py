@@ -51,7 +51,7 @@ urlpatterns = [
     path('api/v1/password-reset-request/', PasswordResetRequestView.as_view(), name='password_reset_request'),
     path('api/v1/reset-password-confirm/', PasswordResetConfirmView.as_view(), name='reset_password_confirm'),
     path('api/v1/user-profile/', get_user_profile, name='get_user_profile'),  # Fetch user profile
-    path('api/v1/course-progress/<int:course_id>/', update_course_progress, name='update_course_progress'),  # Update course progress
+    path('api/v1/course-progress/<int:course_id>/', CourseProgressViewSet.as_view({'get': 'retrieve', 'patch': 'partial_update'}), name='course-progress-detail'), 
     # Explicit path for retrieving module details
     path('api/v1/modules/<int:pk>/', ModuleViewSet.as_view({'get': 'retrieve'}), name='module-detail'),  
     path('api/v1/module-by-name/<str:module_name>/', get_module_by_name, name='get_module_by_name'),
