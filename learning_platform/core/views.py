@@ -26,6 +26,11 @@ from django.utils import timezone
 from django.db.models import Prefetch
 from rest_framework.exceptions import NotFound
 from rest_framework.decorators import action
+import openai
+from googleapiclient.discovery import build
+from .services.quiz_generation_service import (
+    fetch_video_transcript, fetch_video_description, generate_quiz_from_text
+)
 import logging
 logger = logging.getLogger(__name__)
 
@@ -469,3 +474,50 @@ def get_next_learning_path(request, current_learning_path_id):
             return Response({"detail": "No more learning paths available"}, status=404)
     except LearningPath.DoesNotExist:
         return Response({"error": "Current learning path not found"}, status=404)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def generate_quiz_from_video(request, module_id):
+    """
+    Generate a quiz for a module using the associated YouTube video.
+    """
+    try:
+        module = Module.objects.get(id=module_id)
+
+        # Fetch transcript, fallback to description if transcript is unavailable
+        content = fetch_video_transcript(module.video_link) or fetch_video_description(module.video_link)
+        if not content:
+            return Response({"error": "Unable to fetch video content."}, status=400)
+
+        # Generate quiz questions
+        questions_text = generate_quiz_from_text(content)
+        if not questions_text:
+            return Response({"error": "Failed to generate quiz questions."}, status=500)
+
+        # Save quiz and questions to database
+        quiz = Quiz.objects.create(quiz_name=f"Quiz for {module.module_name}", module=module)
+        questions = questions_text.split("\n\n")
+
+        for question_data in questions:
+            if not question_data.strip():
+                continue
+
+            lines = question_data.split("\n")
+            question_text = lines[0].strip()
+            answers = lines[1:]
+
+            question = Question.objects.create(quiz=quiz, question_text=question_text)
+            for answer in answers:
+                is_correct = "Correct:" in answer
+                Answer.objects.create(
+                    question=question,
+                    answer_text=answer.replace("Correct:", "").strip(),
+                    is_correct=is_correct,
+                )
+
+        return Response({"message": "Quiz generated successfully!", "quiz_id": quiz.id})
+    except Module.DoesNotExist:
+        return Response({"error": "Module not found"}, status=404)
+    except Exception as e:
+        print(f"Error generating quiz: {e}")
+        return Response({"error": str(e)}, status=500)
