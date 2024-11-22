@@ -476,12 +476,15 @@ def get_next_learning_path(request, current_learning_path_id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def generate_quiz_from_video(request, module_id):
-    """
-    Generate a quiz for a module using the associated YouTube video.
-    """
     try:
         module = Module.objects.get(id=module_id)
-        return Response({"message": f"Module found: {module.module_name}"}, status=200)
+        
+        # Test transcript fetching
+        transcript = fetch_video_transcript(module.video_link)
+        if not transcript:
+            return Response({"error": "Transcript not available"}, status=400)
+        
+        return Response({"message": "Transcript fetched successfully"}, status=200)
     except Module.DoesNotExist:
         return Response({"error": "Module not found"}, status=404)
     except Exception as e:
