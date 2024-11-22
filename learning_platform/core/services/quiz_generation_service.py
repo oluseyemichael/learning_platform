@@ -40,14 +40,16 @@ def generate_quiz_from_text(content, num_questions=5):
     Generate multiple-choice quiz questions from content using OpenAI API.
     """
     try:
+        # Define the prompt
         prompt = (
             f"Create {num_questions} multiple-choice quiz questions from the following content. "
             "Each question should include one correct answer and three incorrect answers:\n\n"
             f"{content}"
         )
 
+        # Call OpenAI's Chat API
         response = openai.ChatCompletion.create(
-            model="gpt-4",  # Use GPT-4 or GPT-3.5
+            model="gpt-4",  # Use "gpt-4" or "gpt-3.5-turbo" as appropriate
             messages=[
                 {"role": "system", "content": "You are a helpful assistant creating quizzes."},
                 {"role": "user", "content": prompt},
@@ -58,6 +60,39 @@ def generate_quiz_from_text(content, num_questions=5):
         return response.choices[0].message["content"].strip()
     except Exception as e:
         print(f"Error generating quiz: {e}")
+        return None
+
+
+def generate_default_quiz(topic):
+    """
+    Generate a default quiz based on the module topic using OpenAI's Chat API.
+    """
+    try:
+        # Define the prompt
+        messages = [
+            {"role": "system", "content": "You are an educational assistant creating quizzes for learning modules."},
+            {
+                "role": "user",
+                "content": (
+                    f"Generate a simple quiz with 3 questions about the topic: {topic}. "
+                    "For each question, provide 4 multiple-choice answers and mark one as correct. "
+                    "Format the output as follows:\n\n"
+                    "Question 1:\nAnswer A\nAnswer B Correct:\nAnswer C\nAnswer D\n\n"
+                    "Question 2:\n..."
+                ),
+            },
+        ]
+
+        # Call OpenAI's Chat API
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=messages,
+            max_tokens=300,
+            temperature=0.7,
+        )
+        return response.choices[0].message["content"].strip()
+    except Exception as e:
+        print(f"Error generating default quiz: {e}")
         return None
 
     
