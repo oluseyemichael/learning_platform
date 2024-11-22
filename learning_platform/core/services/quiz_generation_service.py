@@ -46,18 +46,20 @@ def generate_quiz_from_text(content, num_questions=5):
             f"{content}"
         )
 
-        response = openai.Completion.create(
-            engine="text-davinci-003",
-            prompt=prompt,
+        response = openai.ChatCompletion.create(
+            model="gpt-4",  # Use GPT-4 or GPT-3.5
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant creating quizzes."},
+                {"role": "user", "content": prompt},
+            ],
             max_tokens=800,
-            n=1,
-            stop=None,
             temperature=0.7,
         )
-        return response.choices[0].text.strip()
+        return response.choices[0].message["content"].strip()
     except Exception as e:
         print(f"Error generating quiz: {e}")
         return None
+
     
 def generate_default_quiz(topic):
     """
