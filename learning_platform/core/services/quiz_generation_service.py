@@ -58,3 +58,26 @@ def generate_quiz_from_text(content, num_questions=5):
     except Exception as e:
         print(f"Error generating quiz: {e}")
         return None
+    
+def generate_default_quiz(topic):
+    """
+    Generate a default quiz based on the module topic using OpenAI.
+    """
+    try:
+        prompt = (
+            f"Generate a simple quiz with 3 questions about the topic: {topic}. "
+            "For each question, provide 4 multiple-choice answers and mark one as correct. "
+            "Format the output as follows:\n\n"
+            "Question 1:\nAnswer A\nAnswer B Correct:\nAnswer C\nAnswer D\n\n"
+            "Question 2:\n..."
+        )
+        response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=prompt,
+            max_tokens=300,
+            temperature=0.7,
+        )
+        return response.choices[0].text.strip()
+    except Exception as e:
+        print(f"Error generating default quiz: {e}")
+        return None

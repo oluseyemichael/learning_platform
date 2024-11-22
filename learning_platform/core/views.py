@@ -27,7 +27,7 @@ from django.db.models import Prefetch
 from rest_framework.exceptions import NotFound
 from rest_framework.decorators import action
 from .services.quiz_generation_service import (
-    fetch_video_transcript, fetch_video_description, generate_quiz_from_text
+    fetch_video_transcript, fetch_video_description, generate_quiz_from_text, generate_default_quiz
 )
 import logging
 logger = logging.getLogger(__name__)
@@ -476,17 +476,58 @@ def get_next_learning_path(request, current_learning_path_id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def generate_quiz_from_video(request, module_id):
+    """
+    Generate a quiz for a module using the associated YouTube video.
+    """
     try:
         module = Module.objects.get(id=module_id)
         
-        # Test transcript fetching
-        transcript = fetch_video_transcript(module.video_link)
-        if not transcript:
-            return Response({"error": "Transcript not available"}, status=400)
-        
-        return Response({"message": "Transcript fetched successfully"}, status=200)
+        # Try to fetch transcript
+        content = fetch_video_transcript(module.video_link)
+        if not content:
+            # Fallback to fetching video description
+            print(f"No transcript available for {module.video_link}, trying description...")
+            content = fetch_video_description(module.video_link)
+
+        if not content:
+            # Dynamically generate meaningful fallback content
+            print(f"No transcript or description available for {module.video_link}. Generating default content.")
+            content = f"This module covers the topic: {module.topic}. Please prepare questions related to {module.topic}."
+
+        # Generate quiz questions
+        questions_text = generate_quiz_from_text(content)
+        if not questions_text:
+            # Generate quiz from default OpenAI fallback
+            print(f"Failed to generate quiz from content. Using default OpenAI generation.")
+            questions_text = generate_default_quiz(module.topic)
+
+        if not questions_text:
+            return Response({"error": "Failed to generate quiz questions."}, status=500)
+
+        # Save quiz and questions to database
+        quiz = Quiz.objects.create(quiz_name=f"Quiz for {module.module_name}", module=module)
+        questions = questions_text.split("\n\n")
+
+        for question_data in questions:
+            if not question_data.strip():
+                continue
+
+            lines = question_data.split("\n")
+            question_text = lines[0].strip()
+            answers = lines[1:]
+
+            question = Question.objects.create(quiz=quiz, question_text=question_text)
+            for answer in answers:
+                is_correct = "Correct:" in answer
+                Answer.objects.create(
+                    question=question,
+                    answer_text=answer.replace("Correct:", "").strip(),
+                    is_correct=is_correct,
+                )
+
+        return Response({"message": "Quiz generated successfully!", "quiz_id": quiz.id})
     except Module.DoesNotExist:
         return Response({"error": "Module not found"}, status=404)
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error generating quiz: {e}")
         return Response({"error": str(e)}, status=500)
