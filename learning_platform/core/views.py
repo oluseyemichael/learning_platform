@@ -26,8 +26,6 @@ from django.utils import timezone
 from django.db.models import Prefetch
 from rest_framework.exceptions import NotFound
 from rest_framework.decorators import action
-import openai
-from googleapiclient.discovery import build
 from .services.quiz_generation_service import (
     fetch_video_transcript, fetch_video_description, generate_quiz_from_text
 )
