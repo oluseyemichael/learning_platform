@@ -476,4 +476,14 @@ def get_next_learning_path(request, current_learning_path_id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def generate_quiz_from_video(request, module_id):
-    return Response({"message": f"Received module_id: {module_id}"}, status=200)
+    """
+    Generate a quiz for a module using the associated YouTube video.
+    """
+    try:
+        module = Module.objects.get(id=module_id)
+        return Response({"message": f"Module found: {module.module_name}"}, status=200)
+    except Module.DoesNotExist:
+        return Response({"error": "Module not found"}, status=404)
+    except Exception as e:
+        print(f"Error: {e}")
+        return Response({"error": str(e)}, status=500)
