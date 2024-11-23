@@ -27,7 +27,7 @@ from django.db.models import Prefetch
 from rest_framework.exceptions import NotFound
 from rest_framework.decorators import action
 from .services.quiz_generation_service import (
-    fetch_video_transcript, fetch_video_description, generate_quiz_from_text, generate_default_quiz
+    fetch_video_transcript, fetch_video_description, generate_quiz_with_chat_api, generate_default_quiz, generate_quiz_from_module
 )
 import logging
 logger = logging.getLogger(__name__)
@@ -481,7 +481,7 @@ def generate_quiz_from_video(request, module_id):
     """
     try:
         module = Module.objects.get(id=module_id)
-        
+
         # Try to fetch transcript
         content = fetch_video_transcript(module.video_link)
         if not content:
@@ -495,7 +495,7 @@ def generate_quiz_from_video(request, module_id):
             content = f"This module covers the topic: {module.topic}. Please prepare questions related to {module.topic}."
 
         # Generate quiz questions
-        questions_text = generate_quiz_from_text(content)
+        questions_text = generate_quiz_with_chat_api(content)
         if not questions_text:
             # Generate quiz from default OpenAI fallback
             print(f"Failed to generate quiz from content. Using default OpenAI generation.")
