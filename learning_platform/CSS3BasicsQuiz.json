@@ -1,0 +1,360 @@
+[
+    {
+        "model": "core.quiz",
+        "pk": 3,
+        "fields": {
+            "quiz_name": "CSS3 Basics Quiz",
+            "module": 3
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 21,
+        "fields": {
+            "question_text": "What does CSS stand for?",
+            "quiz": 3
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 61,
+        "fields": {
+            "question": 21,
+            "answer_text": "Cascading Style Sheets",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 62,
+        "fields": {
+            "question": 21,
+            "answer_text": "Creative Style System",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 63,
+        "fields": {
+            "question": 21,
+            "answer_text": "Computer Style Sheets",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 22,
+        "fields": {
+            "question_text": "Which selector targets an element with a specific ID?",
+            "quiz": 3
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 64,
+        "fields": {
+            "question": 22,
+            "answer_text": "#",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 65,
+        "fields": {
+            "question": 22,
+            "answer_text": ".",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 66,
+        "fields": {
+            "question": 22,
+            "answer_text": "@",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 23,
+        "fields": {
+            "question_text": "What is the purpose of the box-sizing property?",
+            "quiz": 3
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 67,
+        "fields": {
+            "question": 23,
+            "answer_text": "To control how the total width and height of an element is calculated",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 68,
+        "fields": {
+            "question": 23,
+            "answer_text": "To create a box around an element",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 69,
+        "fields": {
+            "question": 23,
+            "answer_text": "To set the size of a box shadow",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 24,
+        "fields": {
+            "question_text": "Which property is used to change the text color?",
+            "quiz": 3
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 70,
+        "fields": {
+            "question": 24,
+            "answer_text": "color",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 71,
+        "fields": {
+            "question": 24,
+            "answer_text": "text-color",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 72,
+        "fields": {
+            "question": 24,
+            "answer_text": "font-color",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 25,
+        "fields": {
+            "question_text": "What are the components of the CSS box model in order from inside to outside?",
+            "quiz": 3
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 73,
+        "fields": {
+            "question": 25,
+            "answer_text": "Content, padding, border, margin",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 74,
+        "fields": {
+            "question": 25,
+            "answer_text": "Margin, border, padding, content",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 75,
+        "fields": {
+            "question": 25,
+            "answer_text": "Content, margin, padding, border",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 26,
+        "fields": {
+            "question_text": "Which CSS property is used to control the space between elements?",
+            "quiz": 3
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 76,
+        "fields": {
+            "question": 26,
+            "answer_text": "margin",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 77,
+        "fields": {
+            "question": 26,
+            "answer_text": "spacing",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 78,
+        "fields": {
+            "question": 26,
+            "answer_text": "gap",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 27,
+        "fields": {
+            "question_text": "What is the default display property value for a <div> element?",
+            "quiz": 3
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 79,
+        "fields": {
+            "question": 27,
+            "answer_text": "block",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 80,
+        "fields": {
+            "question": 27,
+            "answer_text": "inline",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 81,
+        "fields": {
+            "question": 27,
+            "answer_text": "inline-block",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 28,
+        "fields": {
+            "question_text": "Which pseudo-class is used to select an element when a user hovers over it?",
+            "quiz": 3
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 82,
+        "fields": {
+            "question": 28,
+            "answer_text": ":hover",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 83,
+        "fields": {
+            "question": 28,
+            "answer_text": ":mouseover",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 84,
+        "fields": {
+            "question": 28,
+            "answer_text": ":onhover",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 29,
+        "fields": {
+            "question_text": "What is the purpose of CSS specificity?",
+            "quiz": 3
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 85,
+        "fields": {
+            "question": 29,
+            "answer_text": "To determine which CSS rule takes precedence when multiple rules target the same element",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 86,
+        "fields": {
+            "question": 29,
+            "answer_text": "To make CSS code more specific",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 87,
+        "fields": {
+            "question": 29,
+            "answer_text": "To specify which CSS file to use",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 30,
+        "fields": {
+            "question_text": "How can you include external CSS in an HTML document?",
+            "quiz": 3
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 88,
+        "fields": {
+            "question": 30,
+            "answer_text": "Using the <link> tag in the head section",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 89,
+        "fields": {
+            "question": 30,
+            "answer_text": "Using the <css> tag",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 90,
+        "fields": {
+            "question": 30,
+            "answer_text": "Using the <style> tag in the body section",
+            "is_correct": false
+        }
+    }
+]

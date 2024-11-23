@@ -1,0 +1,360 @@
+[
+    {
+        "model": "core.quiz",
+        "pk": 2,
+        "fields": {
+            "quiz_name": "HTML5 Foundations Quiz",
+            "module": 2
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 11,
+        "fields": {
+            "question_text": "What does HTML stand for?",
+            "quiz": 2
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 31,
+        "fields": {
+            "question": 11,
+            "answer_text": "HyperText Markup Language",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 32,
+        "fields": {
+            "question": 11,
+            "answer_text": "High-Level Text Management Language",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 33,
+        "fields": {
+            "question": 11,
+            "answer_text": "Hyperlink and Text Markup Language",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 12,
+        "fields": {
+            "question_text": "Which tag is used to define the main content area of an HTML document?",
+            "quiz": 2
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 34,
+        "fields": {
+            "question": 12,
+            "answer_text": "<main>",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 35,
+        "fields": {
+            "question": 12,
+            "answer_text": "<content>",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 36,
+        "fields": {
+            "question": 12,
+            "answer_text": "<body>",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 13,
+        "fields": {
+            "question_text": "What is the purpose of the <!DOCTYPE html> declaration?",
+            "quiz": 2
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 37,
+        "fields": {
+            "question": 13,
+            "answer_text": "To specify that the document is using HTML5",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 38,
+        "fields": {
+            "question": 13,
+            "answer_text": "To create a new HTML document",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 39,
+        "fields": {
+            "question": 13,
+            "answer_text": "To link to external resources",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 14,
+        "fields": {
+            "question_text": "Which semantic tag is used for navigation links?",
+            "quiz": 2
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 40,
+        "fields": {
+            "question": 14,
+            "answer_text": "<nav>",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 41,
+        "fields": {
+            "question": 14,
+            "answer_text": "<links>",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 42,
+        "fields": {
+            "question": 14,
+            "answer_text": "<navigation>",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 15,
+        "fields": {
+            "question_text": "Which attribute is used to specify alternate text for an image?",
+            "quiz": 2
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 43,
+        "fields": {
+            "question": 15,
+            "answer_text": "alt",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 44,
+        "fields": {
+            "question": 15,
+            "answer_text": "title",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 45,
+        "fields": {
+            "question": 15,
+            "answer_text": "description",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 16,
+        "fields": {
+            "question_text": "What is the purpose of the <article> tag?",
+            "quiz": 2
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 46,
+        "fields": {
+            "question": 16,
+            "answer_text": "To define independent, self-contained content",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 47,
+        "fields": {
+            "question": 16,
+            "answer_text": "To format text as a news article",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 48,
+        "fields": {
+            "question": 16,
+            "answer_text": "To create a blog post",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 17,
+        "fields": {
+            "question_text": "What is the difference between <section> and <div>?",
+            "quiz": 2
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 49,
+        "fields": {
+            "question": 17,
+            "answer_text": "<section> represents a thematic grouping of content, while <div> is for general grouping",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 50,
+        "fields": {
+            "question": 17,
+            "answer_text": "They are exactly the same",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 51,
+        "fields": {
+            "question": 17,
+            "answer_text": "<section> is for styling, <div> is for content",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 18,
+        "fields": {
+            "question_text": "What is the purpose of the <header> element?",
+            "quiz": 2
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 52,
+        "fields": {
+            "question": 18,
+            "answer_text": "To contain introductory content or navigational aids",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 53,
+        "fields": {
+            "question": 18,
+            "answer_text": "To create a heading",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 54,
+        "fields": {
+            "question": 18,
+            "answer_text": "To style the top of the page",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 19,
+        "fields": {
+            "question_text": "Which HTML5 element is used to specify the footer of a document or section?",
+            "quiz": 2
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 55,
+        "fields": {
+            "question": 19,
+            "answer_text": "<footer>",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 56,
+        "fields": {
+            "question": 19,
+            "answer_text": "<bottom>",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 57,
+        "fields": {
+            "question": 19,
+            "answer_text": "<end>",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 20,
+        "fields": {
+            "question_text": "What is the purpose of the <aside> element?",
+            "quiz": 2
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 58,
+        "fields": {
+            "question": 20,
+            "answer_text": "To define content that is tangentially related to the content around it",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 59,
+        "fields": {
+            "question": 20,
+            "answer_text": "To create a sidebar menu",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 60,
+        "fields": {
+            "question": 20,
+            "answer_text": "To hide content from view",
+            "is_correct": false
+        }
+    }
+]

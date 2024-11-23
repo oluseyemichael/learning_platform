@@ -1,0 +1,368 @@
+[
+    {
+        "model": "core.course",
+        "pk": 1,
+        "fields": {
+            "course_name": "Complete Web Development: Zero to Hero",
+            "description": "A comprehensive journey from absolute beginner to professional web developer. Master frontend, backend, databases, APIs, security, testing, and modern development practices with hands-on projects."
+        }
+    },
+    {
+        "model": "core.learningpath",
+        "pk": 1,
+        "fields": {
+            "path_name": "Web Fundamentals",
+            "course": 1
+        }
+    },
+    {
+        "model": "core.learningpath",
+        "pk": 2,
+        "fields": {
+            "path_name": "Frontend Development",
+            "course": 1
+        }
+    },
+    {
+        "model": "core.learningpath",
+        "pk": 3,
+        "fields": {
+            "path_name": "JavaScript Mastery",
+            "course": 1
+        }
+    },
+    {
+        "model": "core.learningpath",
+        "pk": 4,
+        "fields": {
+            "path_name": "Backend Development",
+            "course": 1
+        }
+    },
+    {
+        "model": "core.learningpath",
+        "pk": 5,
+        "fields": {
+            "path_name": "Database Management",
+            "course": 1
+        }
+    },
+    {
+        "model": "core.learningpath",
+        "pk": 6,
+        "fields": {
+            "path_name": "Modern Frontend Frameworks",
+            "course": 1
+        }
+    },
+    {
+        "model": "core.learningpath",
+        "pk": 7,
+        "fields": {
+            "path_name": "API Development",
+            "course": 1
+        }
+    },
+    {
+        "model": "core.learningpath",
+        "pk": 8,
+        "fields": {
+            "path_name": "Testing & Security",
+            "course": 1
+        }
+    },
+    {
+        "model": "core.learningpath",
+        "pk": 9,
+        "fields": {
+            "path_name": "DevOps & Deployment",
+            "course": 1
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 1,
+        "fields": {
+            "module_name": "Internet Fundamentals",
+            "learning_path": 1,
+            "topic": "How the Internet Works, DNS, Hosting, and Domain Names",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 2,
+        "fields": {
+            "module_name": "HTML5 Foundations",
+            "learning_path": 1,
+            "topic": "Document Structure, Elements, and Semantic HTML",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 3,
+        "fields": {
+            "module_name": "CSS3 Basics",
+            "learning_path": 1,
+            "topic": "Selectors, Box Model, and Basic Styling",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 4,
+        "fields": {
+            "module_name": "Advanced HTML5",
+            "learning_path": 2,
+            "topic": "Forms, Media Elements, and Canvas",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 5,
+        "fields": {
+            "module_name": "CSS Layout",
+            "learning_path": 2,
+            "topic": "Flexbox, Grid, and Responsive Design",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 6,
+        "fields": {
+            "module_name": "CSS Advanced",
+            "learning_path": 2,
+            "topic": "Animations, Transitions, and Transforms",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 7,
+        "fields": {
+            "module_name": "JavaScript Fundamentals",
+            "learning_path": 3,
+            "topic": "Variables, Data Types, Functions, and Control Flow",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 8,
+        "fields": {
+            "module_name": "DOM Manipulation",
+            "learning_path": 3,
+            "topic": "Selecting Elements, Events, and Dynamic Content",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 9,
+        "fields": {
+            "module_name": "Modern JavaScript",
+            "learning_path": 3,
+            "topic": "ES6+, Promises, Async/Await, and Modules",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 10,
+        "fields": {
+            "module_name": "Node.js Fundamentals",
+            "learning_path": 4,
+            "topic": "Node.js Runtime, NPM, and Core Modules",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 11,
+        "fields": {
+            "module_name": "Express.js",
+            "learning_path": 4,
+            "topic": "Routing, Middleware, and Template Engines",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 12,
+        "fields": {
+            "module_name": "Server-Side Architecture",
+            "learning_path": 4,
+            "topic": "MVC Pattern, Authentication, and Authorization",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 13,
+        "fields": {
+            "module_name": "SQL Fundamentals",
+            "learning_path": 5,
+            "topic": "Relational Databases, SQL Queries, and Database Design",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 14,
+        "fields": {
+            "module_name": "MongoDB",
+            "learning_path": 5,
+            "topic": "NoSQL Databases, CRUD Operations, and Aggregation",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 15,
+        "fields": {
+            "module_name": "Database Security",
+            "learning_path": 5,
+            "topic": "Data Protection, Access Control, and Best Practices",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 16,
+        "fields": {
+            "module_name": "React Fundamentals",
+            "learning_path": 6,
+            "topic": "Components, Props, State, and Hooks",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 17,
+        "fields": {
+            "module_name": "React Advanced",
+            "learning_path": 6,
+            "topic": "Context, Redux, and Performance Optimization",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 18,
+        "fields": {
+            "module_name": "Next.js",
+            "learning_path": 6,
+            "topic": "Server-Side Rendering and Static Site Generation",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 19,
+        "fields": {
+            "module_name": "RESTful APIs",
+            "learning_path": 7,
+            "topic": "REST Principles, HTTP Methods, and Status Codes",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 20,
+        "fields": {
+            "module_name": "GraphQL",
+            "learning_path": 7,
+            "topic": "Queries, Mutations, and Schema Design",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 21,
+        "fields": {
+            "module_name": "API Security",
+            "learning_path": 7,
+            "topic": "Authentication, Authorization, and Rate Limiting",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 22,
+        "fields": {
+            "module_name": "Unit Testing",
+            "learning_path": 8,
+            "topic": "Jest, Testing React Components, and Test-Driven Development",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 23,
+        "fields": {
+            "module_name": "Security Best Practices",
+            "learning_path": 8,
+            "topic": "OWASP, XSS Prevention, and CSRF Protection",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 24,
+        "fields": {
+            "module_name": "Git & Version Control",
+            "learning_path": 9,
+            "topic": "Git Fundamentals, Branching Strategies, and Collaboration",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 25,
+        "fields": {
+            "module_name": "CI/CD",
+            "learning_path": 9,
+            "topic": "Continuous Integration, Deployment, and Docker Basics",
+            "video_link": "",
+            "blog_link": ""
+        }
+    },
+    {
+        "model": "core.module",
+        "pk": 26,
+        "fields": {
+            "module_name": "Cloud Deployment",
+            "learning_path": 9,
+            "topic": "AWS/Heroku Deployment and Production Best Practices",
+            "video_link": "",
+            "blog_link": ""
+        }
+    }
+]

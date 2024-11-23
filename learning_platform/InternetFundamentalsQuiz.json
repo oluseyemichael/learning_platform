@@ -1,0 +1,360 @@
+[
+    {
+        "model": "core.quiz",
+        "pk": 1,
+        "fields": {
+            "quiz_name": "Internet Fundamentals Quiz",
+            "module": 1
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 1,
+        "fields": {
+            "question_text": "What is DNS?",
+            "quiz": 1
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 1,
+        "fields": {
+            "question": 1,
+            "answer_text": "Domain Name System - converts domain names to IP addresses",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 2,
+        "fields": {
+            "question": 1,
+            "answer_text": "Data Network Service - manages internet traffic",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 3,
+        "fields": {
+            "question": 1,
+            "answer_text": "Digital Naming Software - creates domain names",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 2,
+        "fields": {
+            "question_text": "What protocol is used for secure data transfer over the web?",
+            "quiz": 1
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 4,
+        "fields": {
+            "question": 2,
+            "answer_text": "HTTPS",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 5,
+        "fields": {
+            "question": 2,
+            "answer_text": "FTP",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 6,
+        "fields": {
+            "question": 2,
+            "answer_text": "SMTP",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 3,
+        "fields": {
+            "question_text": "What is a web hosting service?",
+            "quiz": 1
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 7,
+        "fields": {
+            "question": 3,
+            "answer_text": "A service that stores website files and makes them accessible on the internet",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 8,
+        "fields": {
+            "question": 3,
+            "answer_text": "A service that creates website designs",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 9,
+        "fields": {
+            "question": 3,
+            "answer_text": "A service that registers domain names",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 4,
+        "fields": {
+            "question_text": "What is an IP address?",
+            "quiz": 1
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 10,
+        "fields": {
+            "question": 4,
+            "answer_text": "A unique numerical label assigned to each device on a network",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 11,
+        "fields": {
+            "question": 4,
+            "answer_text": "A website's domain name",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 12,
+        "fields": {
+            "question": 4,
+            "answer_text": "An internet security protocol",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 5,
+        "fields": {
+            "question_text": "What is the purpose of HTTP?",
+            "quiz": 1
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 13,
+        "fields": {
+            "question": 5,
+            "answer_text": "To transfer data between web servers and clients",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 14,
+        "fields": {
+            "question": 5,
+            "answer_text": "To store website files",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 15,
+        "fields": {
+            "question": 5,
+            "answer_text": "To create web pages",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 6,
+        "fields": {
+            "question_text": "What is a domain name?",
+            "quiz": 1
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 16,
+        "fields": {
+            "question": 6,
+            "answer_text": "A human-readable address for accessing websites",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 17,
+        "fields": {
+            "question": 6,
+            "answer_text": "A type of web server",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 18,
+        "fields": {
+            "question": 6,
+            "answer_text": "A programming language",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 7,
+        "fields": {
+            "question_text": "What is a web browser?",
+            "quiz": 1
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 19,
+        "fields": {
+            "question": 7,
+            "answer_text": "A software application for accessing and navigating the World Wide Web",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 20,
+        "fields": {
+            "question": 7,
+            "answer_text": "A web server",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 21,
+        "fields": {
+            "question": 7,
+            "answer_text": "A domain name service",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 8,
+        "fields": {
+            "question_text": "What is a URL?",
+            "quiz": 1
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 22,
+        "fields": {
+            "question": 8,
+            "answer_text": "Uniform Resource Locator - the complete web address of a resource",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 23,
+        "fields": {
+            "question": 8,
+            "answer_text": "Universal Reference Link - a type of HTML tag",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 24,
+        "fields": {
+            "question": 8,
+            "answer_text": "User Request Location - a browser feature",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 9,
+        "fields": {
+            "question_text": "What is bandwidth?",
+            "quiz": 1
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 25,
+        "fields": {
+            "question": 9,
+            "answer_text": "The maximum rate of data transfer across a network",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 26,
+        "fields": {
+            "question": 9,
+            "answer_text": "The size of a website",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 27,
+        "fields": {
+            "question": 9,
+            "answer_text": "The number of website visitors",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.question",
+        "pk": 10,
+        "fields": {
+            "question_text": "What is a web server?",
+            "quiz": 1
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 28,
+        "fields": {
+            "question": 10,
+            "answer_text": "A computer that hosts websites and serves content to web browsers",
+            "is_correct": true
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 29,
+        "fields": {
+            "question": 10,
+            "answer_text": "A program that creates websites",
+            "is_correct": false
+        }
+    },
+    {
+        "model": "core.answer",
+        "pk": 30,
+        "fields": {
+            "question": 10,
+            "answer_text": "A type of domain name",
+            "is_correct": false
+        }
+    }
+]
