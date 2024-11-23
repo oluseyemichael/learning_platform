@@ -1,8 +1,9 @@
 import openai
 import os
 from googleapiclient.discovery import build
-from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
 
+# Load API keys from environment variables
 openai.api_key = os.getenv("OPENAI_API_KEY")
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 
@@ -17,9 +18,12 @@ def fetch_video_transcript(video_url):
         transcript = YouTubeTranscriptApi.get_transcript(video_id)
         transcript_text = " ".join([t['text'] for t in transcript])
         return transcript_text
+    except (TranscriptsDisabled, NoTranscriptFound) as e:
+        print(f"Transcript not available for video {video_url}: {e}")
+        return None
     except Exception as e:
-        print(f"Error fetching transcript: {e}")
-        return ""
+        print(f"Unexpected error fetching transcript for video {video_url}: {e}")
+        return None
 
 def fetch_video_description(video_url):
     """
@@ -32,98 +36,90 @@ def fetch_video_description(video_url):
         response = request.execute()
         return response['items'][0]['snippet']['description']
     except Exception as e:
-        print(f"Error fetching video description: {e}")
-        return ""
+        print(f"Error fetching video description for {video_url}: {e}")
+        return None
 
-def generate_quiz_from_text(content, num_questions=5):
+def generate_quiz_with_chat_api(content, num_questions=5):
     """
-    Generate multiple-choice quiz questions from content using OpenAI API.
+    Generate multiple-choice quiz questions from content using OpenAI's Chat API.
     """
     try:
-        # Define the prompt
-        prompt = (
-            f"Create {num_questions} multiple-choice quiz questions from the following content. "
-            "Each question should include one correct answer and three incorrect answers:\n\n"
-            f"{content}"
-        )
+        messages = [
+            {"role": "system", "content": "You are an educational assistant that generates quizzes from text."},
+            {"role": "user", "content": (
+                f"Create {num_questions} multiple-choice quiz questions from the following content. "
+                "Each question should include one correct answer and three incorrect answers. "
+                "Output in the format:\n"
+                "Question 1:\nAnswer A\nAnswer B Correct:\nAnswer C\nAnswer D\n\n"
+                "Content:\n"
+                f"{content}"
+            )}
+        ]
 
-        # Call OpenAI's Chat API
         response = openai.ChatCompletion.create(
-            model="gpt-4",  # Use "gpt-4" or "gpt-3.5-turbo" as appropriate
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant creating quizzes."},
-                {"role": "user", "content": prompt},
-            ],
+            model="gpt-3.5-turbo",
+            messages=messages,
             max_tokens=800,
             temperature=0.7,
         )
-        return response.choices[0].message["content"].strip()
+        return response.choices[0].message['content'].strip()
+    except openai.error.OpenAIError as e:
+        print(f"OpenAI API error: {e}")
+        return None
     except Exception as e:
         print(f"Error generating quiz: {e}")
         return None
 
-
 def generate_default_quiz(topic):
     """
     Generate a default quiz based on the module topic using OpenAI's Chat API.
     """
     try:
-        # Define the prompt
         messages = [
-            {"role": "system", "content": "You are an educational assistant creating quizzes for learning modules."},
-            {
-                "role": "user",
-                "content": (
-                    f"Generate a simple quiz with 3 questions about the topic: {topic}. "
-                    "For each question, provide 4 multiple-choice answers and mark one as correct. "
-                    "Format the output as follows:\n\n"
-                    "Question 1:\nAnswer A\nAnswer B Correct:\nAnswer C\nAnswer D\n\n"
-                    "Question 2:\n..."
-                ),
-            },
+            {"role": "system", "content": "You are an educational assistant that generates quizzes for learning modules."},
+            {"role": "user", "content": (
+                f"Generate a simple quiz with 3 questions about the topic: {topic}. "
+                "For each question, provide 4 multiple-choice answers and mark one as correct. "
+                "Format the output as follows:\n"
+                "Question 1:\nAnswer A\nAnswer B Correct:\nAnswer C\nAnswer D\n\n"
+                "Question 2:\n..."
+            )}
         ]
 
-        # Call OpenAI's Chat API
         response = openai.ChatCompletion.create(
-            model="gpt-4",
+            model="gpt-3.5-turbo",
             messages=messages,
-            max_tokens=300,
+            max_tokens=500,
             temperature=0.7,
         )
-        return response.choices[0].message["content"].strip()
+        return response.choices[0].message['content'].strip()
+    except openai.error.OpenAIError as e:
+        print(f"OpenAI API error: {e}")
+        return None
     except Exception as e:
         print(f"Error generating default quiz: {e}")
         return None
 
-    
-def generate_default_quiz(topic):
+def generate_quiz_from_module(module):
     """
-    Generate a default quiz based on the module topic using OpenAI's Chat API.
+    Generate a quiz for the given module using its YouTube video.
     """
     try:
-        # Define the prompt for quiz generation
-        messages = [
-            {"role": "system", "content": "You are an educational assistant creating quizzes for learning modules."},
-            {
-                "role": "user",
-                "content": (
-                    f"Generate a simple quiz with 3 questions about the topic: {topic}. "
-                    "For each question, provide 4 multiple-choice answers and mark one as correct. "
-                    "Format the output as follows:\n\n"
-                    "Question 1:\nAnswer A\nAnswer B Correct:\nAnswer C\nAnswer D\n\n"
-                    "Question 2:\n..."
-                ),
-            },
-        ]
+        # Step 1: Try fetching the transcript
+        transcript = fetch_video_transcript(module.video_link)
+        if transcript:
+            print("Using transcript for quiz generation.")
+            return generate_quiz_with_chat_api(transcript)
 
-        # Call OpenAI's Chat API
-        response = openai.ChatCompletion.create(
-            model="gpt-4",  # Use GPT-4 or GPT-3.5, depending on your subscription
-            messages=messages,
-            max_tokens=300,
-            temperature=0.7,
-        )
-        return response.choices[0].message["content"].strip()
+        # Step 2: Try fetching the description
+        description = fetch_video_description(module.video_link)
+        if description:
+            print("Using video description for quiz generation.")
+            return generate_quiz_with_chat_api(description)
+
+        # Step 3: Log fallback if both transcript and description are unavailable
+        print(f"No content available for video: {module.video_link}")
+        return None  # No content available, return None or raise an exception
     except Exception as e:
-        print(f"Error generating default quiz: {e}")
+        print(f"Error generating quiz for module {module.id}: {e}")
         return None
