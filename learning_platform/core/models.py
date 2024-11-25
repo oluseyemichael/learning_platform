@@ -55,19 +55,25 @@ class Module(models.Model):
     blog_link = models.CharField(max_length=500, blank=True)
 
     def save(self, *args, **kwargs):
-        # Fetch the highest-rated, latest 15-minute YouTube video based on the topic
-        youtube_videos = get_youtube_videos(self.topic)
-        if youtube_videos:
-            print(f"Video fetched: {youtube_videos[0]['url']}")
-            self.video_link = youtube_videos[0]['url']  # Use the best match
+    # Fetch potential YouTube videos for the module topic
+    youtube_videos = get_youtube_videos(self.topic)
+    if youtube_videos:
+        # Select the best video automatically
+        self.video_link = youtube_videos[0]['url']
+        
+        # Log all potential videos for manual review
+        print(f"Potential videos for '{self.topic}':")
+        for video in youtube_videos:
+            print(f"- {video['url']} ({video['title']})")
+    else:
+        print(f"No suitable videos found for topic '{self.topic}'.")
 
-        # Fetch blog content
-        blog_post = get_blog_posts(self.topic)
-        if blog_post:
-            print(f"Blog fetched: {blog_post['url']}")
-            self.blog_link = blog_post['url']
+    # Fetch blog content
+    blog_post = get_blog_posts(self.topic)
+    if blog_post:
+        self.blog_link = blog_post['url']
 
-        super(Module, self).save(*args, **kwargs)
+    super(Module, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.module_name
