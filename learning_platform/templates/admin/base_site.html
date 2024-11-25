@@ -1,0 +1,97 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | PathED Lecturer{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">PathED Lecturer</a>
+</h1>
+{% endblock %}
+
+{% block extrastyle %}
+<style>
+    :root {
+        --primary: #4C78FF;    /* Bright Blue - main color */
+        --secondary: #F0F4FF;  /* Light Blue - secondary color */
+        --accent: #001249;     /* Navy Blue - accent color */
+        --background: #FAFBFD; /* Off White - background */
+        --primary-fg: #fff;    /* Text color on primary background */
+        --text-color: #001249; /* Default text color */
+    }
+
+    body {
+        background: var(--background);
+    }
+
+    /* Header */
+    #header {
+        background: var(--primary);
+        color: var(--primary-fg);
+    }
+
+    /* Header links */
+    #header a:link, #header a:visited {
+        color: var(--primary-fg);
+    }
+
+    /* Module headers */
+    .module h2, .module caption {
+        background: var(--accent);
+        color: var(--primary-fg);
+    }
+
+    /* Links */
+    a:link, a:visited {
+        color: var(--primary);
+    }
+
+    /* Buttons */
+    .button, input[type=submit], input[type=button], .submit-row input {
+        background: var(--primary);
+        color: var(--primary-fg);
+    }
+
+    /* Button hovers */
+    .button:hover, input[type=submit]:hover, input[type=button]:hover {
+        background: var(--accent);
+        color: var(--primary-fg);
+    }
+
+    /* Selected row */
+    .row1:hover, .row2:hover {
+        background: var(--secondary);
+    }
+
+    /* Breadcrumbs */
+    .breadcrumbs {
+        background: var(--secondary);
+        color: var(--text-color);
+    }
+
+    /* Messages */
+    .message {
+        background: var(--secondary);
+        color: var(--text-color);
+    }
+
+    /* Dashboard */
+    .dashboard .module table th {
+        background: var(--accent);
+        color: var(--primary-fg);
+    }
+
+    /* Form controls */
+    .module {
+        background: #fff;
+    }
+
+    select, input[type=text], input[type=password], input[type=email], input[type=number], input[type=url], input[type=tel], textarea, .vTextField {
+        border: 1px solid var(--secondary);
+    }
+
+    select:focus, input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=number]:focus, input[type=url]:focus, input[type=tel]:focus, textarea:focus, .vTextField:focus {
+        border-color: var(--primary);
+    }
+</style>
+{% endblock %}
