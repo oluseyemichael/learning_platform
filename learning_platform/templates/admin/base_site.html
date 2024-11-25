@@ -5,139 +5,148 @@
 {% block title %}{{ title }} | PathED Lecturer{% endblock %}
 
 {% block branding %}
-<h1 id="site-name">
-    <a href="{% url 'admin:index' %}">PathED Lecturer</a>
-</h1>
+<h1 id="site-name"><a href="{% url 'admin:index' %}">PathED Lecturer Admin</a></h1>
 {% endblock %}
 
 {% block extrastyle %}
 <style>
     :root {
-        --primary: #4C78FF;    /* Bright Blue - main color */
-        --secondary: #F0F4FF;  /* Light Blue - secondary color */
-        --accent: #001249;     /* Navy Blue - accent color */
-        --background: #FAFBFD; /* Off White - background */
-        --primary-fg: #fff;    /* Text color on primary background */
-        --text-color: #001249; /* Default text color */
+        --primary-color: #4C78FF;      /* Bright Blue */
+        --secondary-color: #F0F4FF;    /* Light Blue */
+        --dark-color: #001249;         /* Navy Blue */
+        --background-color: #FAFBFD;   /* Off White */
+        --text-color: #001249;
+        --hover-color: #3a66db;
     }
 
-    /* Global Styles */
-    body {
-        background: var(--background);
+    /* Global Resets */
+    body, html {
+        font-family: 'Inter', 'Arial', sans-serif;
+        background-color: var(--background-color);
         color: var(--text-color);
-        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
     }
 
-    /* Header */
+    /* Header Styling */
     #header {
-        background: var(--primary);
-        color: var(--primary-fg);
+        background: var(--primary-color);
+        color: white;
+        padding: 15px 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    #header a:link, #header a:visited {
-        color: var(--primary-fg);
+    #site-name {
+        margin: 0;
     }
 
-    /* Sidebar */
-    #sidebar, #content-related {
-        background-color: var(--secondary);
-        border-radius: 4px;
-        padding: 16px;
+    #site-name a {
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.2em;
+        transition: color 0.3s;
     }
 
-    /* Module headers */
+    #site-name a:hover {
+        color: var(--secondary-color);
+    }
+
+    /* Navigation Sidebar */
+    #nav-sidebar {
+        background-color: var(--secondary-color);
+        border-right: 1px solid rgba(0,18,73,0.1);
+    }
+
+    #nav-sidebar a {
+        color: var(--dark-color);
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    #nav-sidebar a:hover, #nav-sidebar a:focus {
+        background-color: rgba(76, 120, 255, 0.1);
+        color: var(--primary-color);
+    }
+
+    /* Module Styling */
+    .module {
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+    }
+
     .module h2, .module caption {
-        background: var(--accent);
-        color: var(--primary-fg);
+        background: var(--primary-color);
+        color: white;
+        padding: 12px 15px;
+        margin: 0;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        font-weight: 600;
+    }
+
+    /* Form Styling */
+    .form-row {
+        padding: 10px;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .form-row:last-child {
+        border-bottom: none;
+    }
+
+    /* Buttons */
+    .button, input[type=submit], input[type=button] {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-weight: 500;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .button:hover, input[type=submit]:hover, input[type=button]:hover {
+        background-color: var(--hover-color);
+        transform: translateY(-2px);
     }
 
     /* Links */
     a:link, a:visited {
-        color: var(--primary);
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: color 0.3s;
     }
 
-    /* Buttons */
-    .button, input[type=submit], input[type=button], .submit-row input {
-        background: var(--primary);
-        color: var(--primary-fg);
-        border: none;
-        border-radius: 4px;
-        padding: 8px 16px;
-        cursor: pointer;
+    a:hover {
+        color: var(--hover-color);
+        text-decoration: underline;
     }
 
-    .button:hover, input[type=submit]:hover, input[type=button]:hover {
-        background: var(--accent);
+    /* Action List */
+    .actions {
+        background-color: var(--secondary-color);
+        padding: 10px;
+        border-radius: 5px;
     }
 
-    /* Form controls */
-    .module {
-        background-color: #ffffff;
+    /* Submit Row */
+    .submit-row {
+        background: var(--secondary-color);
+        border-top: 2px solid var(--primary-color);
+        padding: 15px;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
     }
 
-    select, input[type=text], input[type=password], input[type=email], input[type=number], input[type=url], input[type=tel], textarea, .vTextField {
-        border: 1px solid var(--secondary);
-        border-radius: 4px;
-        padding: 8px 12px;
-        color: var(--text-color);
-        background-color: var(--secondary);
-    }
-
-    select:focus, input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=number]:focus, input[type=url]:focus, input[type=tel]:focus, textarea:focus, .vTextField:focus {
-        border-color: var(--primary);
-        outline: none;
-        background-color: #fff;
-    }
-
-    /* Login form */
-    .login .form-row {
-        background-color: var(--secondary);
-        border-radius: 4px;
-        padding: 16px;
-    }
-
-    .login #content {
-        background-color: var(--background);
-    }
-
-    /* Table */
-    table {
-        border-collapse: collapse;
-        width: 100%;
-    }
-
-    th, td {
-        padding: 8px;
-        text-align: left;
-        border-bottom: 1px solid var(--secondary);
-    }
-
-    th {
-        background-color: var(--accent);
-        color: var(--primary-fg);
-    }
-
-    /* Pagination */
-    .paginator {
-        background-color: var(--secondary);
-        padding: 8px;
-        border-radius: 4px;
-    }
-
-    .paginator a {
-        color: var(--primary);
-    }
-
-    /* Messages */
-    .message {
-        background: var(--secondary);
-        color: var(--text-color);
-    }
-
-    /* Dashboard */
-    .dashboard .module table th {
-        background: var(--accent);
-        color: var(--primary-fg);
+    /* Responsive Adjustments */
+    @media (max-width: 767px) {
+        #header, #nav-sidebar {
+            position: static;
+            width: 100%;
+        }
     }
 </style>
 {% endblock %}
+
+{% block nav-global %}{% endblock %}
