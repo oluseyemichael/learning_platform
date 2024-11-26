@@ -222,7 +222,7 @@ class CourseProgress(models.Model):
 
         # Calculate overall course progress
         if total_learning_paths > 0:
-            self.progress_percentage = total_progress / total_learning_paths
+            self.progress_percentage = round(total_progress / total_learning_paths)
             self.completed = self.progress_percentage == 100
             self.completion_date = timezone.now() if self.completed else None
 
