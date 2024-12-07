@@ -472,6 +472,8 @@ def get_next_learning_path(request, current_learning_path_id):
             return Response({"detail": "No more learning paths available"}, status=404)
     except LearningPath.DoesNotExist:
         return Response({"error": "Current learning path not found"}, status=404)
+    
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -531,3 +533,4 @@ def generate_quiz_from_video(request, module_id):
     except Exception as e:
         print(f"Error generating quiz: {e}")
         return Response({"error": str(e)}, status=500)
+
