@@ -4,6 +4,11 @@ from googleapiclient.errors import HttpError
 import httplib2
 from datetime import datetime, timedelta
 import isodate
+import logging
+
+# Configure logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 YOUTUBE_API_KEY = config('YOUTUBE_API_KEY')
 
@@ -26,32 +31,40 @@ def get_youtube_videos(topic):
             videoDuration='long',  # 'long' for videos > 20 minutes
             type='video',
             publishedAfter=published_after,
-            relevanceLanguage="en"
+            relevanceLanguage="en",  # Ensure English videos
         )
         response = request.execute(num_retries=3)
 
         videos = []
         for item in response.get('items', []):
-            video_id = item['id']['videoId']
-            video_details = youtube.videos().list(part='contentDetails,statistics', id=video_id).execute()
-            details = video_details['items'][0]
+            try:
+                video_id = item['id']['videoId']
+                video_details = youtube.videos().list(part='contentDetails,statistics', id=video_id).execute()
+                details = video_details['items'][0]
 
-            # Extract video details
-            duration = isodate.parse_duration(details['contentDetails']['duration'])
-            likes = int(details['statistics'].get('likeCount', 0))
-            views = int(details['statistics'].get('viewCount', 0))
-            published_date = item['snippet']['publishedAt']
+                # Extract video details with fallback for missing fields
+                duration_str = details.get('contentDetails', {}).get('duration')
+                duration = isodate.parse_duration(duration_str) if duration_str else None
 
-            videos.append({
-                'title': item['snippet']['title'],
-                'description': item['snippet']['description'],
-                'videoId': video_id,
-                'url': f'https://www.youtube.com/watch?v={video_id}',
-                'duration': duration,
-                'likes': likes,
-                'views': views,
-                'published_date': published_date,
-            })
+                likes = int(details.get('statistics', {}).get('likeCount', 0))
+                views = int(details.get('statistics', {}).get('viewCount', 0))
+                published_date = item['snippet']['publishedAt']
+
+                if duration:  # Skip videos with missing duration
+                    videos.append({
+                        'title': item['snippet']['title'],
+                        'description': item['snippet']['description'],
+                        'videoId': video_id,
+                        'url': f'https://www.youtube.com/watch?v={video_id}',
+                        'duration': duration,
+                        'likes': likes,
+                        'views': views,
+                        'published_date': published_date,
+                    })
+            except KeyError as e:
+                logger.error(f"Missing key in video details: {e}")
+            except Exception as e:
+                logger.error(f"An unexpected error occurred: {e}")
 
         # Filter for comprehensive videos
         filtered_videos = [
@@ -62,18 +75,22 @@ def get_youtube_videos(topic):
         # Sort videos by likes, views, and recency
         filtered_videos.sort(key=lambda x: (x['likes'], x['views'], x['published_date']), reverse=True)
 
+        logger.info(f"Fetched {len(filtered_videos)} videos for topic: {topic}")
         return filtered_videos[:3]  # Return the top 3 videos
 
     except TimeoutError:
-        print("The request timed out.")
+        logger.error("The request timed out.")
     except HttpError as err:
-        print(f"An error occurred: {err}")
+        logger.error(f"An error occurred with the YouTube API: {err}")
+    except Exception as err:
+        logger.error(f"An unexpected error occurred: {err}")
+
     return []
 
 
 
 if __name__ == "__main__":
-    topic = "Git Fundamentals, Branching Strategies, and Collaboration"
+    topic = "Introduction to data science"
     results = get_youtube_videos(topic)
 
     print(f"\nSearch results for '{topic}':\n")
