@@ -92,7 +92,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://your-frontend-deployment.com",  # deployed frontend URL
+    "https://path-ed.vercel.app",  # deployed frontend URL
 ]
 
 
@@ -226,6 +226,6 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
 
-FRONTEND_URL = "http://localhost:5173"  # Adjust based on where frontend is running
+FRONTEND_URL = "https://path-ed.vercel.app"  # Frontend url for email verification
 
 django_heroku.settings(locals())

@@ -58,7 +58,6 @@ urlpatterns = [
     path('api/v1/quizzes/<int:quiz_id>/submit/', submit_quiz, name='submit_quiz'),
     path('api/v1/module-progress', get_module_progress, name='get_module_progress'),
     path('api/v1/next-learning-path/<int:current_learning_path_id>/', get_next_learning_path, name='get_next_learning_path'),
-    path('api/v1/modules/<int:module_id>/generate-quiz_from_video/', generate_quiz_from_video, name='generate_quiz_from_video'),
     # Versioned router endpoint
     path('api/v1/', include(router.urls)),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
