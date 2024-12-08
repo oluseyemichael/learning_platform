@@ -32,6 +32,7 @@ def get_youtube_videos(topic):
             type='video',
             publishedAfter=published_after,
             relevanceLanguage="en",  # Ensure English videos
+            regionCode="US"  #  Added US region to ensure English videos
         )
         response = request.execute(num_retries=3)
 
