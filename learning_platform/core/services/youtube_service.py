@@ -5,6 +5,7 @@ import httplib2
 from datetime import datetime, timedelta
 import isodate
 import logging
+import re
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -12,94 +13,181 @@ logger.setLevel(logging.INFO)
 
 YOUTUBE_API_KEY = config('YOUTUBE_API_KEY')
 
-def get_youtube_videos(topic):
+def clean_title(title):
+    """
+    Clean and normalize video titles to improve matching and filtering.
+    
+    Args:
+        title (str): Original video title
+    
+    Returns:
+        str: Cleaned and normalized title
+    """
+    # Remove special characters and convert to lowercase
+    cleaned = re.sub(r'[^\w\s]', '', title.lower())
+    
+    # Remove common filler words and variations
+    filler_words = [
+        'full', 'complete', 'ultimate', 'comprehensive', 
+        'tutorial', 'guide', 'course', 'masterclass',
+        '2024', '2023', 'new', 'latest'
+    ]
+    for word in filler_words:
+        cleaned = cleaned.replace(word, '').strip()
+    
+    return cleaned
+
+def generate_search_queries(topic):
+    """
+    Generate multiple search query variations to improve result diversity.
+    
+    Args:
+        topic (str): Original search topic
+    
+    Returns:
+        list: List of search query variations
+    """
+    base_queries = [
+        f"{topic} tutorial",
+        f"learn {topic}",
+        f"{topic} explained",
+        f"best {topic} course",
+        f"comprehensive {topic} guide",
+        f"{topic} for beginners",
+        f"advanced {topic} techniques"
+    ]
+    return base_queries
+
+def get_youtube_videos(topic, max_results=20):
+    """
+    Enhanced YouTube video search with multiple query strategies and advanced filtering.
+    
+    Args:
+        topic (str): Search topic
+        max_results (int, optional): Maximum number of results to fetch. Defaults to 20.
+    
+    Returns:
+        list: Filtered and ranked video results
+    """
     current_year = datetime.now().year
     published_after = f'{current_year - 2}-01-01T00:00:00Z'  # Last 2 years
 
     try:
         youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY, http=httplib2.Http(timeout=30))
+        all_videos = []
 
-        # Construct improved query
-        query = f"{topic} complete guide 2024 full tutorial"
-
-        # Fetching relevant videos for the topic
-        request = youtube.search().list(
-            q=query,
-            part='snippet',
-            maxResults=15,  # Fetch a wider pool
-            order='relevance',  # Prioritize relevance
-            videoDuration='long',  # 'long' for videos > 20 minutes
-            type='video',
-            publishedAfter=published_after,
-            relevanceLanguage="en",  # Ensure English videos
-            regionCode="US"  #  Added US region to ensure English videos
-        )
-        response = request.execute(num_retries=3)
-
-        videos = []
-        for item in response.get('items', []):
+        # Try multiple query variations
+        for query in generate_search_queries(topic):
             try:
-                video_id = item['id']['videoId']
-                video_details = youtube.videos().list(part='contentDetails,statistics', id=video_id).execute()
-                details = video_details['items'][0]
+                request = youtube.search().list(
+                    q=query,
+                    part='snippet',
+                    maxResults=15,
+                    order='viewCount',  # Prioritize popular videos
+                    videoDuration='long',  # 'long' for videos > 20 minutes
+                    type='video',
+                    publishedAfter=published_after,
+                    relevanceLanguage="en",
+                    regionCode="US"
+                )
+                response = request.execute(num_retries=3)
 
-                # Extract video details with fallback for missing fields
-                duration_str = details.get('contentDetails', {}).get('duration')
-                duration = isodate.parse_duration(duration_str) if duration_str else None
+                # Process each video
+                for item in response.get('items', []):
+                    try:
+                        video_id = item['id']['videoId']
+                        
+                        # Fetch detailed video information
+                        video_details = youtube.videos().list(
+                            part='contentDetails,statistics,snippet', 
+                            id=video_id
+                        ).execute()
+                        
+                        details = video_details['items'][0]
 
-                likes = int(details.get('statistics', {}).get('likeCount', 0))
-                views = int(details.get('statistics', {}).get('viewCount', 0))
-                published_date = item['snippet']['publishedAt']
+                        # Extract video details with robust error handling
+                        duration_str = details.get('contentDetails', {}).get('duration')
+                        duration = isodate.parse_duration(duration_str) if duration_str else None
 
-                if duration:  # Skip videos with missing duration
-                    videos.append({
-                        'title': item['snippet']['title'],
-                        'description': item['snippet']['description'],
-                        'videoId': video_id,
-                        'url': f'https://www.youtube.com/watch?v={video_id}',
-                        'duration': duration,
-                        'likes': likes,
-                        'views': views,
-                        'published_date': published_date,
-                    })
-            except KeyError as e:
-                logger.error(f"Missing key in video details: {e}")
-            except Exception as e:
-                logger.error(f"An unexpected error occurred: {e}")
+                        # Skip videos with undefined duration
+                        if not duration:
+                            continue
 
-        # Filter for comprehensive videos
+                        # Enhanced metrics and filtering
+                        video_info = {
+                            'title': item['snippet']['title'],
+                            'clean_title': clean_title(item['snippet']['title']),
+                            'description': item['snippet']['description'],
+                            'videoId': video_id,
+                            'url': f'https://www.youtube.com/watch?v={video_id}',
+                            'duration': duration,
+                            'likes': int(details.get('statistics', {}).get('likeCount', 0)),
+                            'views': int(details.get('statistics', {}).get('viewCount', 0)),
+                            'channel_title': item['snippet']['channelTitle'],
+                            'published_date': item['snippet']['publishedAt']
+                        }
+
+                        all_videos.append(video_info)
+
+                    except (KeyError, ValueError) as e:
+                        logger.warning(f"Skipping video due to parsing error: {e}")
+
+            except HttpError as e:
+                logger.error(f"HTTP error in query '{query}': {e}")
+
+        # Advanced filtering and ranking
         filtered_videos = [
-            video for video in videos
-            if timedelta(minutes=45) <= video['duration'] <= timedelta(hours=2)
+            video for video in all_videos
+            if (
+                # Duration between 30 minutes and 2 hours
+                timedelta(minutes=30) <= video['duration'] <= timedelta(hours=2)
+                # Decent number of views
+                and video['views'] > 5000
+            )
         ]
 
-        # Sort videos by likes, views, and recency
-        filtered_videos.sort(key=lambda x: (x['likes'], x['views'], x['published_date']), reverse=True)
+        # Sophisticated ranking function
+        def ranking_score(video):
+            # Combine multiple factors: views, likes, recency, and title relevance
+            view_score = min(video['views'] / 10000, 10)  # Cap at 10
+            like_score = min(video['likes'] / 1000, 5)  # Cap at 5
+            
+            # Calculate title relevance
+            title_words = video['clean_title'].split()
+            topic_words = clean_title(topic).split()
+            title_relevance = len(set(title_words) & set(topic_words)) / len(topic_words or [1])
+            
+            # Recency bonus
+            published_date = datetime.fromisoformat(video['published_date'].replace('Z', '+00:00'))
+            days_since_publish = (datetime.now(published_date.tzinfo) - published_date).days
+            recency_score = max(10 - (days_since_publish / 365), 0)  # Bonus decays over years
+            
+            return view_score + like_score + (title_relevance * 5) + recency_score
 
-        logger.info(f"Fetched {len(filtered_videos)} videos for topic: {topic}")
-        return filtered_videos[:3]  # Return the top 3 videos
+        # Sort and return top results
+        ranked_videos = sorted(filtered_videos, key=ranking_score, reverse=True)
+        
+        logger.info(f"Fetched {len(ranked_videos)} videos for topic: {topic}")
+        return ranked_videos[:5]  # Return top 5 videos
 
-    except TimeoutError:
-        logger.error("The request timed out.")
-    except HttpError as err:
-        logger.error(f"An error occurred with the YouTube API: {err}")
     except Exception as err:
-        logger.error(f"An unexpected error occurred: {err}")
-
-    return []
-
-
+        logger.error(f"Unexpected error in video search: {err}")
+        return []
 
 if __name__ == "__main__":
-    topic = "Introduction to data science"
-    results = get_youtube_videos(topic)
-
-    print(f"\nSearch results for '{topic}':\n")
-    for video in results:
-        print("Title:", video['title'])
-        print("Description:", video['description'])
-        print("URL:", video['url'])
-        print("Duration:", video['duration'])
-        print("Likes:", video['likes'])
-        print("Views:", video['views'])
-        print("-" * 50)
+    # Example usage
+    topics = [
+        "What is oop"
+    ]
+    
+    for topic in topics:
+        print(f"\nSearch results for '{topic}':\n")
+        results = get_youtube_videos(topic)
+        
+        for video in results:
+            print("Title:", video['title'])
+            print("Channel:", video['channel_title'])
+            print("Views:", video['views'])
+            print("URL:", video['url'])
+            print("Duration:", video['duration'])
+            print("-" * 50)
