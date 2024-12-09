@@ -1,10 +1,11 @@
-from decouple import config
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-import httplib2
-from datetime import datetime, timedelta
-import isodate
 import logging
+from decouple import config
+import isodate
+from datetime import datetime, timedelta
+import re
+from difflib import SequenceMatcher
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -12,93 +13,105 @@ logger.setLevel(logging.INFO)
 
 YOUTUBE_API_KEY = config('YOUTUBE_API_KEY')
 
-def get_youtube_videos(topic):
+def calculate_text_similarity(a, b):
+    """
+    Calculate similarity between two strings using SequenceMatcher.
+    """
+    a_clean = re.sub(r'[^\w\s]', '', a.lower())
+    b_clean = re.sub(r'[^\w\s]', '', b.lower())
+    return SequenceMatcher(None, a_clean, b_clean).ratio()
+
+def get_youtube_videos(topic, max_results=10, similarity_threshold=0.6):
+    """
+    Search YouTube videos with strict language and relevance filtering.
+    """
     current_year = datetime.now().year
-    published_after = f'{current_year - 2}-01-01T00:00:00Z'  # Last 2 years
+    published_after = f"{current_year - 2}-01-01T00:00:00Z"  # Limit to last 2 years
 
     try:
-        youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY, http=httplib2.Http(timeout=30))
+        youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
+        all_videos = []
 
-        # Construct specific query
-        query = f'"{topic}" tutorial OR course OR guide'
+        # Define primary language and region filters
+        relevance_language = 'en'  # English language content
+        primary_region = 'US'      # United States region
 
         request = youtube.search().list(
-            q=query,
+            q=topic,
             part='snippet',
-            maxResults=15,
+            maxResults=20,
             order='relevance',
-            videoDuration='long',
+            videoDuration='long',  # Videos longer than 20 minutes
             type='video',
             publishedAfter=published_after,
-            relevanceLanguage="en",
-            regionCode="US"
+            relevanceLanguage=relevance_language,
+            regionCode=primary_region
         )
-        response = request.execute(num_retries=3)
 
-        videos = []
+        response = request.execute()
+        
         for item in response.get('items', []):
             try:
                 video_id = item['id']['videoId']
-                video_details = youtube.videos().list(part='contentDetails,statistics', id=video_id).execute()
+
+                # Fetch video details
+                video_details = youtube.videos().list(
+                    part='contentDetails,snippet,statistics',
+                    id=video_id
+                ).execute()
+
                 details = video_details['items'][0]
 
-                # Extract details
-                duration_str = details.get('contentDetails', {}).get('duration')
+                duration_str = details['contentDetails']['duration']
                 duration = isodate.parse_duration(duration_str) if duration_str else None
 
-                title = item['snippet']['title']
-                description = item['snippet']['description']
-                likes = int(details.get('statistics', {}).get('likeCount', 0))
-                views = int(details.get('statistics', {}).get('viewCount', 0))
-                published_date = item['snippet']['publishedAt']
+                if not duration:
+                    continue
 
-                # Check if topic is explicitly in title or description
-                if topic.lower() in title.lower() or topic.lower() in description.lower():
-                    videos.append({
-                        'title': title,
-                        'description': description,
-                        'videoId': video_id,
-                        'url': f'https://www.youtube.com/watch?v={video_id}',
-                        'duration': duration,
-                        'likes': likes,
-                        'views': views,
-                        'published_date': published_date,
-                    })
-            except KeyError as e:
-                logger.error(f"Missing key in video details: {e}")
+                # Extract video details
+                title = details['snippet']['title']
+                description = details['snippet']['description']
+                channel_title = details['snippet']['channelTitle']
+                published_at = details['snippet']['publishedAt']
+                views = int(details['statistics'].get('viewCount', 0))
+
+                # Calculate similarity
+                title_similarity = calculate_text_similarity(topic, title)
+                desc_similarity = calculate_text_similarity(topic, description)
+
+                if title_similarity < similarity_threshold and desc_similarity < similarity_threshold:
+                    continue
+
+                video_info = {
+                    'title': title,
+                    'description': description,
+                    'videoId': video_id,
+                    'url': f"https://www.youtube.com/watch?v={video_id}",
+                    'duration': duration,
+                    'views': views,
+                    'channel_title': channel_title,
+                    'published_at': published_at,
+                    'title_similarity': title_similarity,
+                    'desc_similarity': desc_similarity
+                }
+                all_videos.append(video_info)
             except Exception as e:
-                logger.error(f"An unexpected error occurred: {e}")
+                logger.warning(f"Error processing video: {e}")
 
-        # Filter by duration
-        filtered_videos = [
-            video for video in videos
-            if timedelta(minutes=30) <= video['duration'] <= timedelta(hours=3)
-        ]
+        # Return top results sorted by views and relevance
+        sorted_videos = sorted(all_videos, key=lambda x: (x['views'], x['title_similarity']), reverse=True)
+        return sorted_videos[:max_results]
 
-        # Sort by likes and views
-        filtered_videos.sort(key=lambda x: (x['likes'], x['views'], x['published_date']), reverse=True)
+    except HttpError as e:
+        logger.error(f"YouTube API error: {e}")
+        return []
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}")
+        return []
 
-        logger.info(f"Fetched {len(filtered_videos)} videos for topic: {topic}")
-        return filtered_videos[:3] if filtered_videos else videos[:3]
-
-    except HttpError as err:
-        logger.error(f"An error occurred with the YouTube API: {err}")
-    except Exception as err:
-        logger.error(f"An unexpected error occurred: {err}")
-
-    return []
-
-
+# Example usage
 if __name__ == "__main__":
-    topic = "Python programming"
-    results = get_youtube_videos(topic)
-
-    print(f"\nSearch results for '{topic}':\n")
-    for video in results:
-        print("Title:", video['title'])
-        print("Description:", video['description'])
-        print("URL:", video['url'])
-        print("Duration:", video['duration'])
-        print("Likes:", video['likes'])
-        print("Views:", video['views'])
-        print("-" * 50)
+    topic = "Object Oriented Programming"
+    videos = get_youtube_videos(topic)
+    for video in videos:
+        print(f"Title: {video['title']}, URL: {video['url']}, Views: {video['views']}")
