@@ -24,8 +24,8 @@ Before running the project, ensure you have the following installed:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/learning-platform-backend.git
-   cd learning-platform-backend
+   git clone https://github.com/oluseyemichael/pathED-Backend.git
+   cd learning-platform
    ```
 
 2. Create and activate a virtual environment:
@@ -131,4 +131,4 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 ---
 
-For any issues or feature requests, please open an issue on the [GitHub repository](https://github.com/oluseyemichael/learning-platform-backend).
+For any issues or feature requests, please open an issue on the [GitHub repository](https://github.com/oluseyemichael/pathED-Backend).
