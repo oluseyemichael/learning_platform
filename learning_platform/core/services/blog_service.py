@@ -10,7 +10,7 @@ def get_blog_posts(topic):
         # Adjust query for learning-focused results
         params = {
             "engine": "google",
-            "q": f"{topic} tutotial",
+            "q": f"{topic} tutorial",
             "hl": "en",
             "num": 3,  # Get a few results to filter for relevance
             "api_key": SERPAPI_KEY
