@@ -91,6 +91,8 @@ EMAIL_PORT=587
 EMAIL_HOST_USER=your-email@example.com
 EMAIL_HOST_PASSWORD=your-email-password
 EMAIL_USE_TLS=True
+YOUTUBE_API_KEY='your youtube api key'
+SERPAPI_KEY='your serp api key'
 ```
 
 ## Testing
