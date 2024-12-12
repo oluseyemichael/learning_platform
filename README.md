@@ -125,10 +125,6 @@ Contributions are welcome! Please follow these steps:
    ```
 5. Submit a pull request.
 
-## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
----
 
 For any issues or feature requests, please open an issue on the [GitHub repository](https://github.com/oluseyemichael/pathED-Backend).
